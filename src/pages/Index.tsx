@@ -1,322 +1,200 @@
-import { useState, useEffect } from "react";
-import Icon from "@/components/ui/icon";
-
-const NAV_LINKS = [
-  { label: "Главная", href: "#hero" },
-  { label: "О базе", href: "#about" },
-  { label: "Услуги", href: "#services" },
-  { label: "Галерея", href: "#gallery" },
-  { label: "Бронирование", href: "#booking" },
-  { label: "Контакты", href: "#contacts" },
-];
-
-const SERVICES = [
-  {
-    icon: "Home",
-    title: "Уютные домики",
-    desc: "12 благоустроенных деревянных домиков с видом на озеро. Полное оснащение, бельё, отопление.",
-    price: "от 3 500 ₽/ночь",
-  },
-  {
-    icon: "Fish",
-    title: "Рыбалка",
-    desc: "Аренда лодок, снастей и профессиональные рыбацкие гиды. Карась, щука, окунь — круглый год.",
-    price: "от 800 ₽/день",
-  },
-  {
-    icon: "Flame",
-    title: "Русская баня",
-    desc: "Настоящая дровяная баня на берегу с купелью и зоной отдыха. Берёзовые и дубовые веники.",
-    price: "от 2 000 ₽/час",
-  },
-  {
-    icon: "TreePine",
-    title: "Экскурсии",
-    desc: "Пешие маршруты, конные прогулки и экотуры по заповедному лесу с опытными проводниками.",
-    price: "от 1 200 ₽/чел",
-  },
-  {
-    icon: "Utensils",
-    title: "Полевая кухня",
-    desc: "Уха на костре, шашлыки, грибной суп. Готовим из свежих местных продуктов каждый день.",
-    price: "от 500 ₽/блюдо",
-  },
-  {
-    icon: "Bike",
-    title: "Активный отдых",
-    desc: "Велосипеды, байдарки, волейбол, настольный теннис и детская площадка для всей семьи.",
-    price: "от 400 ₽/час",
-  },
-];
-
-const GALLERY_ITEMS = [
-  {
-    url: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80",
-    label: "Лесное озеро",
-    span: "col-span-2 row-span-2",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=600&q=80",
-    label: "Деревянные домики",
-    span: "",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=600&q=80",
-    label: "Русская баня",
-    span: "",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80",
-    label: "Отдых у костра",
-    span: "",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
-    label: "Лесные тропы",
-    span: "",
-  },
-  {
-    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&q=80",
-    label: "Дикая природа",
-    span: "",
-  },
-];
-
-const MARQUEE_ITEMS = [
-  "🌲 Дикий лес",
-  "🎣 Рыбалка",
-  "🔥 Баня",
-  "🏕️ Кемпинг",
-  "🛶 Байдарки",
-  "🌄 Рассветы",
-  "🍄 Тихая охота",
-  "⛺ Природа",
-];
-
-const STATS = [
-  { value: "12", label: "домиков" },
-  { value: "8+", label: "лет работы" },
-  { value: "4.9★", label: "рейтинг" },
-  { value: "2000+", label: "гостей в год" },
-];
+import { useState, useEffect, useRef } from "react";
 
 export default function Index() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    date: "",
-    guests: "2",
-    service: "домик",
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  );
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [stickyVisible, setStickyVisible] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", checkin: "", checkout: "", guests: "" });
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const onScroll = () => setStickyVisible(window.scrollY > 600);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in-view"); }),
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll(".fade-up").forEach((el) => observerRef.current?.observe(el));
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setFormSubmitted(true);
+  };
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileMenuOpen(false);
   };
 
   return (
-    <div className="min-h-screen font-golos" style={{ background: "var(--dark-bg)", color: "#eeeee4" }}>
-      {/* ═══════════════ NAVBAR ═══════════════ */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "glass-card py-3 shadow-2xl" : "py-5"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <a href="#hero" className="flex items-center gap-2">
-            <span className="font-oswald text-xl font-bold neon-text tracking-wider">ДИКИЙ</span>
-            <span className="font-oswald text-xl font-bold text-white tracking-wider">БЕРЕГ</span>
-          </a>
-
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="nav-link text-sm font-medium">
-                {l.label}
-              </a>
-            ))}
-          </div>
-
-          <a href="#booking" className="hidden md:inline-flex btn-primary px-5 py-2 rounded-full text-sm font-bold">
+    <>
+      {/* NAV */}
+      <nav className="nav">
+        <div className="nav-logo">Рейд <span>Паллада</span></div>
+        <div className="nav-links" style={mobileMenuOpen ? {
+          display: "flex", flexDirection: "column", position: "fixed",
+          top: 64, left: 0, right: 0, background: "var(--color-surface)",
+          padding: "var(--space-6)", gap: "var(--space-5)",
+          borderBottom: "1px solid var(--color-border)", zIndex: 99
+        } : {}}>
+          <a href="#place" onClick={(e) => { e.preventDefault(); scrollTo("place"); }}>О месте</a>
+          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo("services"); }}>Услуги</a>
+          <a href="#pricing" onClick={(e) => { e.preventDefault(); scrollTo("pricing"); }}>Цены</a>
+          <a href="#location" onClick={(e) => { e.preventDefault(); scrollTo("location"); }}>Как добраться</a>
+        </div>
+        <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
+          <button className="theme-btn" onClick={toggleTheme} aria-label="Тема">
+            {theme === "dark" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
+          </button>
+          <a href="#booking" className="nav-cta" onClick={(e) => { e.preventDefault(); scrollTo("booking"); }}>
             Забронировать
           </a>
-
-          <button className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
-            <Icon name={menuOpen ? "X" : "Menu"} size={24} />
+          <button className="nav-mobile-menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Меню">
+            <span /><span /><span />
           </button>
         </div>
-
-        {menuOpen && (
-          <div className="md:hidden glass-card mt-2 mx-4 rounded-2xl p-6 flex flex-col gap-4">
-            {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="nav-link text-base" onClick={() => setMenuOpen(false)}>
-                {l.label}
-              </a>
-            ))}
-            <a href="#booking" className="btn-primary text-center px-5 py-2 rounded-full text-sm font-bold mt-2">
-              Забронировать
-            </a>
-          </div>
-        )}
       </nav>
 
-      {/* ═══════════════ HERO ═══════════════ */}
-      <section id="hero" className="relative min-h-screen flex items-center overflow-hidden noise-bg">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80"
-            alt="Лес"
-            className="w-full h-full object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(10,15,13,0.93) 0%, rgba(10,15,13,0.72) 60%, rgba(10,15,13,0.5) 100%)",
-            }}
-          />
-        </div>
-
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="orb orb-green absolute w-96 h-96 top-20 left-20 opacity-60" />
-          <div className="orb orb-amber absolute w-72 h-72 bottom-32 right-32 opacity-50" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16">
-          <div className="max-w-3xl">
-            <div className="section-tag reveal mb-6">Туристическая база</div>
-
-            <h1
-              className="font-oswald font-bold leading-none mb-6 reveal reveal-delay-1"
-              style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
-            >
-              <span className="text-white">ДИКИЙ</span>{" "}
-              <span className="neon-text">БЕРЕГ</span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-white/70 mb-10 max-w-xl leading-relaxed reveal reveal-delay-2">
-              Затерянный в таёжном лесу на берегу чистейшего озера. Рыбалка, баня, свежий воздух и настоящий отдых от городской суеты.
-            </p>
-
-            <div className="flex flex-wrap gap-4 reveal reveal-delay-3">
-              <a
-                href="#booking"
-                className="btn-primary px-8 py-4 rounded-full text-base font-bold inline-flex items-center gap-2"
-              >
-                <Icon name="Calendar" size={18} />
-                Забронировать
-              </a>
-              <a
-                href="#about"
-                className="px-8 py-4 rounded-full text-base font-semibold border inline-flex items-center gap-2 transition-colors hover:text-green-400"
-                style={{ borderColor: "rgba(255,255,255,0.15)", color: "white" }}
-              >
-                <Icon name="PlayCircle" size={18} />
-                Узнать больше
-              </a>
-            </div>
-
-            <div className="flex flex-wrap gap-8 mt-16 reveal reveal-delay-4">
-              {STATS.map((s) => (
-                <div key={s.label}>
-                  <div className="font-oswald text-3xl font-bold neon-text">{s.value}</div>
-                  <div className="text-white/50 text-sm mt-1">{s.label}</div>
-                </div>
-              ))}
-            </div>
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-bg" aria-hidden="true" />
+        <svg className="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z" fill="rgba(245,242,236,0.06)"/>
+          <path d="M0,80 C360,40 720,110 1080,70 C1260,50 1380,90 1440,80 L1440,120 L0,120 Z" fill="rgba(245,242,236,0.04)"/>
+        </svg>
+        <div className="hero-content">
+          <div className="hero-badge">
+            <div className="hero-badge-dot" />
+            Хасанский район · Коса Назимова · Сезон 2026
+          </div>
+          <h1>Рейд <em>Паллада</em></h1>
+          <p className="hero-sub">База отдыха у Японского моря — там, где сосны встречают прибой, а закаты не помещаются в кадр</p>
+          <div className="hero-actions">
+            <a href="#booking" className="btn-hero" onClick={(e) => { e.preventDefault(); scrollTo("booking"); }}>
+              🌊 Забронировать место
+            </a>
+            <a href="#day" className="btn-ghost" onClick={(e) => { e.preventDefault(); scrollTo("day"); }}>
+              Как проходит день →
+            </a>
           </div>
         </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-white/30 text-xs tracking-widest uppercase">Скролл</span>
-          <Icon name="ChevronDown" size={20} className="text-green-400" />
+        <div className="hero-stats">
+          <div><div className="hero-stat-num">+24°С</div><div className="hero-stat-label">море в июле–августе</div></div>
+          <div><div className="hero-stat-num">3 ч</div><div className="hero-stat-label">от Владивостока</div></div>
+          <div><div className="hero-stat-num">5★</div><div className="hero-stat-label">средняя оценка гостей</div></div>
+          <div><div className="hero-stat-num">Июнь–Сент</div><div className="hero-stat-label">сезон 2026</div></div>
         </div>
       </section>
 
-      {/* ═══════════════ MARQUEE ═══════════════ */}
-      <div
-        className="overflow-hidden py-4 border-y"
-        style={{ borderColor: "var(--glass-border)", background: "rgba(61,220,132,0.03)" }}
-      >
-        <div className="marquee-track">
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="font-oswald text-sm tracking-widest uppercase px-8 text-white/40">
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ═══════════════ ABOUT ═══════════════ */}
-      <section id="about" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <div className="relative">
-            <div className="rounded-3xl overflow-hidden aspect-[4/3]">
-              <img
-                src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=900&q=80"
-                alt="База"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div
-              className="absolute -bottom-6 -right-6 w-48 h-48 rounded-2xl overflow-hidden border-4"
-              style={{ borderColor: "var(--dark-bg)" }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1471623320832-752e8bbf8413?w=400&q=80"
-                alt="Природа"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute top-6 -left-6 glass-card rounded-2xl p-4 flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center"
-                style={{ background: "rgba(61,220,132,0.2)" }}
-              >
-                <Icon name="Star" size={18} className="text-green-400" />
-              </div>
-              <div>
-                <div className="font-bold text-white text-sm">4.9 / 5.0</div>
-                <div className="text-white/50 text-xs">2000+ отзывов</div>
-              </div>
-            </div>
-          </div>
-
+      {/* PAIN */}
+      <section className="section pain">
+        <div className="section-inner">
           <div>
-            <div className="section-tag mb-4">О нас</div>
-            <h2 className="font-oswald text-4xl md:text-5xl font-bold text-white mb-6">
-              Настоящий отдых <span className="neon-text">на природе</span>
-            </h2>
-            <p className="text-white/60 text-lg leading-relaxed mb-6">
-              «Дикий Берег» — семейная туристическая база в 120 км от города, затерявшаяся в первозданном таёжном лесу на берегу лесного озера.
+            <p className="section-label" style={{ color: "var(--color-gold)" }}>Узнаёте себя?</p>
+            <h2 className="pain-title">Устали от отдыха,<br />который <em>не отдыхает?</em></h2>
+            <p className="pain-text" style={{ marginTop: "var(--space-4)" }}>
+              Толпы на пляже, дорогие отели без души, шум и суета. Мы создали место, где всё по-другому.
             </p>
-            <p className="text-white/55 leading-relaxed mb-8">
-              Мы открылись 8 лет назад с одной целью — дать людям возможность по-настоящему отдохнуть от городского шума. Никаких аниматоров, никакого форс-мажора — только лес, вода и тишина.
-            </p>
+          </div>
+          <div className="pain-items">
+            {[
+              { icon: "🏖️", title: "Переполненные пляжи?", desc: "У нас — собственный берег только для гостей базы" },
+              { icon: "🏨", title: "Холодные номера в отеле?", desc: "Тёплые деревянные домики с верандой и видом на море" },
+              { icon: "🍽️", title: "Ресторанные цены за завтрак?", desc: "Мангальные зоны — готовьте сами, когда хотите" },
+              { icon: "📵", title: "Хочется просто тишины?", desc: "Коса Назимова — звук волн, сосны и звёздное небо" },
+            ].map((item) => (
+              <div key={item.title} className="pain-item fade-up">
+                <div className="pain-icon">{item.icon}</div>
+                <div>
+                  <div className="pain-item-title">{item.title}</div>
+                  <div className="pain-item-desc">{item.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-2 gap-4">
+      {/* PLACE */}
+      <section className="section place" id="place">
+        <div className="section-inner">
+          <p className="section-label fade-up">О месте</p>
+          <h2 className="section-title fade-up">Коса Назимова —<br />особенное место Приморья</h2>
+          <div className="place-grid">
+            <div className="place-img-wrap fade-up">
+              <svg viewBox="0 0 400 300" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} aria-hidden="true">
+                <defs>
+                  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#0d3a44"/>
+                    <stop offset="100%" stopColor="#2d8a6e"/>
+                  </linearGradient>
+                  <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1a6070"/>
+                    <stop offset="100%" stopColor="#0d3a44"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#sky)"/>
+                <circle cx="300" cy="80" r="36" fill="#d4a943" opacity="0.9"/>
+                <circle cx="300" cy="80" r="50" fill="#d4a943" opacity="0.15"/>
+                <rect y="160" width="400" height="140" fill="url(#sea)"/>
+                <path d="M0,170 Q50,155 100,168 Q150,181 200,165 Q250,149 300,162 Q350,175 400,162 L400,185 Q350,198 300,185 Q250,172 200,188 Q150,204 100,190 Q50,176 0,192 Z" fill="rgba(255,255,255,0.08)"/>
+                <path d="M0,195 Q60,180 120,193 Q180,206 240,192 Q300,178 360,191 Q390,197 400,192 L400,210 Q370,215 340,210 Q280,200 220,214 Q160,228 100,214 Q50,202 0,214 Z" fill="rgba(255,255,255,0.06)"/>
+                <path d="M0,200 Q100,185 200,198 Q300,211 400,200 L400,220 Q300,230 200,218 Q100,206 0,220 Z" fill="#c8a06a" opacity="0.5"/>
+                <g fill="#1a4a38" opacity="0.85">
+                  <path d="M30,160 L38,110 L46,160 Z"/>
+                  <path d="M26,145 L38,100 L50,145 Z"/>
+                  <rect x="35" y="160" width="6" height="20" fill="#3a2a1a"/>
+                  <path d="M70,155 L77,112 L84,155 Z"/>
+                  <path d="M67,142 L77,105 L87,142 Z"/>
+                  <rect x="74" y="155" width="6" height="18" fill="#3a2a1a"/>
+                  <path d="M360,150 L368,105 L376,150 Z"/>
+                  <path d="M356,135 L368,95 L380,135 Z"/>
+                  <rect x="364" y="150" width="8" height="22" fill="#3a2a1a"/>
+                </g>
+                <path d="M185,180 Q200,170 215,180 L212,188 L188,188 Z" fill="rgba(255,255,255,0.6)"/>
+                <line x1="200" y1="170" x2="200" y2="152" stroke="rgba(255,255,255,0.5)" strokeWidth="1"/>
+                <path d="M200,153 L210,162 L200,162 Z" fill="rgba(255,255,255,0.4)"/>
+              </svg>
+              <div className="place-img-overlay">
+                <div className="place-img-tag">📍 Хасанский район, Приморский край</div>
+              </div>
+            </div>
+            <div className="place-features fade-up">
               {[
-                { icon: "MapPin", label: "120 км от города" },
-                { icon: "Droplets", label: "Озеро с чистой водой" },
-                { icon: "Wind", label: "Чистый лесной воздух" },
-                { icon: "Shield", label: "Безопасная территория" },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: "rgba(61,220,132,0.15)" }}
-                  >
-                    <Icon name={item.icon as "MapPin"} size={16} className="text-green-400" />
+                { icon: "🌊", title: "Японское море", desc: "Самое тёплое море Дальнего Востока. Прогревается до +24–26°С в июле–августе. Чистая вода, живописные берега." },
+                { icon: "🏝️", title: "Коса Назимова", desc: "Узкая полоска суши между морем и заливом. С одной стороны рассветы, с другой — закаты. Таких мест в России единицы." },
+                { icon: "🌲", title: "Сосновый воздух", desc: "Хасанский район — это смешанные леса, сопки и дикая природа. База стоит прямо у кромки леса." },
+                { icon: "🕊️", title: "Тишина и уединение", desc: "Небольшая база — только свои гости. Никакой толпы, никаких аниматоров с микрофоном. Только море и вы." },
+              ].map((f) => (
+                <div key={f.title} className="place-feature">
+                  <div className="place-feature-icon">{f.icon}</div>
+                  <div>
+                    <div className="place-feature-title">{f.title}</div>
+                    <div className="place-feature-desc">{f.desc}</div>
                   </div>
-                  <span className="text-white/80 text-sm">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -324,53 +202,56 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ═══════════════ SERVICES ═══════════════ */}
-      <section id="services" className="py-24 px-6" style={{ background: "rgba(255,255,255,0.02)" }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="section-tag mb-4 justify-center">Что мы предлагаем</div>
-            <h2 className="font-oswald text-4xl md:text-5xl font-bold text-white">
-              Наши <span className="neon-text">услуги</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICES.map((s) => (
-              <div key={s.title} className="service-card glass-card gradient-border rounded-2xl p-6 cursor-default">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: "rgba(61,220,132,0.15)" }}
-                >
-                  <Icon name={s.icon as "Home"} size={24} className="text-green-400" />
-                </div>
-                <h3 className="font-oswald text-xl font-bold text-white mb-2">{s.title}</h3>
-                <p className="text-white/55 text-sm leading-relaxed mb-4">{s.desc}</p>
-                <div className="font-oswald text-base font-bold amber-text">{s.price}</div>
+      {/* SERVICES */}
+      <section className="section services" id="services">
+        <div className="section-inner">
+          <p className="section-label fade-up">Что включено</p>
+          <h2 className="section-title fade-up">Всё для настоящего отдыха</h2>
+          <div className="services-grid">
+            <div className="service-card featured fade-up">
+              <div className="service-emoji">🏠</div>
+              <div className="service-title">Уютные домики с верандой</div>
+              <div className="service-desc">Деревянные домики с полным комплектом постельного белья, верандой с видом на море. Просыпаетесь — а море прямо перед вами.</div>
+            </div>
+            {[
+              { emoji: "🧖", title: "Баня-бочка у воды", desc: "Классический контраст: раскалённая баня и прохладное Японское море рядом." },
+              { emoji: "🛶", title: "SUP и каяки", desc: "Прокат досок и каяков — выходите прямо с берега базы." },
+              { emoji: "🔥", title: "Мангальные зоны", desc: "Оборудованные беседки с мангалом — жарьте, когда захочется." },
+              { emoji: "🐟", title: "Рыбалка", desc: "Японское море кормит само — кальмар, камбала, краб." },
+              { emoji: "🅿️", title: "Охраняемая парковка", desc: "Парковка прямо на территории. Привезли велосипеды — рады." },
+            ].map((s) => (
+              <div key={s.title} className="service-card fade-up">
+                <div className="service-emoji">{s.emoji}</div>
+                <div className="service-title">{s.title}</div>
+                <div className="service-desc">{s.desc}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ GALLERY ═══════════════ */}
-      <section id="gallery" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="section-tag mb-4 justify-center">Наша территория</div>
-            <h2 className="font-oswald text-4xl md:text-5xl font-bold text-white">
-              <span className="neon-text">Галерея</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[200px]">
-            {GALLERY_ITEMS.map((item, i) => (
-              <div key={i} className={`gallery-item relative ${item.span} rounded-2xl overflow-hidden group`}>
-                <img src={item.url} alt={item.label} className="w-full h-full object-cover" />
-                <div
-                  className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)" }}
-                >
-                  <span className="text-white font-oswald text-sm tracking-wider uppercase">{item.label}</span>
+      {/* DAY TIMELINE */}
+      <section className="section day" id="day">
+        <div className="section-inner">
+          <p className="section-label fade-up">Типичный день</p>
+          <h2 className="section-title fade-up">Как проходит ваш день<br />на «Рейд Паллада»</h2>
+          <p className="section-desc fade-up">Никакого расписания — только то, что хочется вам.</p>
+          <div className="timeline fade-up">
+            {[
+              { time: "07:00", title: "Рассвет над морем", desc: "Открываете дверь домика — море в 50 метрах. Кофе на веранде, звук волн, никаких будильников." },
+              { time: "08:30", title: "Первое купание", desc: "Тёплая вода, чистый пляж — только ваши гости." },
+              { time: "11:00", title: "На SUP-доске в открытое море", desc: "Горизонт только ваш. Тихо, спокойно, невесомо." },
+              { time: "14:00", title: "Мангал и обед на воздухе", desc: "Свежая рыба или мясо, холодное пиво, тень от сосны. Время замедляется." },
+              { time: "17:00", title: "Рыбалка с берега", desc: "Кто рыбачит — уходит с уловом. Кто нет — просто сидит и смотрит на воду." },
+              { time: "19:00", title: "Баня + море", desc: "Выходите из бани — и сразу в море. Один из лучших контрастов в жизни." },
+              { time: "21:00", title: "Закат и звёзды", desc: "Красный закат над Японским морем. Затем звёздное небо без засветки городов. Тишина." },
+            ].map((item) => (
+              <div key={item.time} className="timeline-item">
+                <div className="timeline-time">{item.time}</div>
+                <div className="timeline-dot" />
+                <div className="timeline-text">
+                  <strong>{item.title}</strong>
+                  <span>{item.desc}</span>
                 </div>
               </div>
             ))}
@@ -378,123 +259,135 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ═══════════════ BOOKING ═══════════════ */}
-      <section id="booking" className="py-24 px-6" style={{ background: "rgba(61,220,132,0.03)" }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="section-tag mb-4 justify-center">Онлайн-бронирование</div>
-            <h2 className="font-oswald text-4xl md:text-5xl font-bold text-white">
-              Забронировать <span className="neon-text">место</span>
-            </h2>
-            <p className="text-white/50 mt-4">Заполните форму — мы перезвоним в течение 15 минут</p>
-          </div>
-
-          <div className="glass-card rounded-3xl p-8 md:p-12">
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-white/60 text-sm font-medium">Ваше имя</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Иван Петров"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="input-neon rounded-xl px-4 py-3 text-white placeholder:text-white/25 font-golos text-sm"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)" }}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-white/60 text-sm font-medium">Телефон</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+7 (999) 000-00-00"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="input-neon rounded-xl px-4 py-3 text-white placeholder:text-white/25 font-golos text-sm"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)" }}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-white/60 text-sm font-medium">Дата заезда</label>
-                  <input
-                    type="date"
-                    required
-                    value={form.date}
-                    onChange={(e) => setForm({ ...form, date: e.target.value })}
-                    className="input-neon rounded-xl px-4 py-3 text-white font-golos text-sm"
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid var(--glass-border)",
-                      colorScheme: "dark",
-                    }}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-white/60 text-sm font-medium">Количество гостей</label>
-                  <select
-                    value={form.guests}
-                    onChange={(e) => setForm({ ...form, guests: e.target.value })}
-                    className="input-neon rounded-xl px-4 py-3 text-white font-golos text-sm"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)" }}
-                  >
-                    {["1", "2", "3", "4", "5", "6+"].map((n) => (
-                      <option key={n} value={n} style={{ background: "#111a14" }}>
-                        {n} {n === "1" ? "гость" : "гостя"}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <label className="text-white/60 text-sm font-medium">Интересующая услуга</label>
-                  <div className="flex flex-wrap gap-3">
-                    {["домик", "баня", "рыбалка", "экскурсия"].map((svc) => (
-                      <button
-                        key={svc}
-                        type="button"
-                        onClick={() => setForm({ ...form, service: svc })}
-                        className="px-4 py-2 rounded-full text-sm font-medium capitalize transition-all"
-                        style={{
-                          background: form.service === svc ? "var(--neon-green)" : "rgba(255,255,255,0.05)",
-                          color: form.service === svc ? "var(--dark-bg)" : "rgba(255,255,255,0.6)",
-                          border: `1px solid ${form.service === svc ? "var(--neon-green)" : "var(--glass-border)"}`,
-                        }}
-                      >
-                        {svc}
-                      </button>
-                    ))}
+      {/* REVIEWS */}
+      <section className="section reviews">
+        <div className="section-inner">
+          <p className="section-label fade-up">Отзывы гостей</p>
+          <h2 className="section-title fade-up">Те, кто уже был —<br />возвращаются снова</h2>
+          <div className="reviews-grid">
+            {[
+              { initials: "АП", color: "var(--color-primary)", name: "Александр Петров", city: "Владивосток · июль 2025", text: "«Приехали на 3 дня — остались на неделю. Место затягивает. Тишина, море, баня — всё на месте. Уже планируем следующий сезон.»" },
+              { initials: "МС", color: "var(--color-accent)", name: "Марина Сергеева", city: "Хабаровск · август 2025", text: "«Лучший семейный отдых за 5 лет. Детям было раздолье на пляже, муж рыбачил, я — на SUP. Хозяева очень приветливые.»" },
+              { initials: "ДК", color: "#2d8a6e", name: "Дмитрий Козлов", city: "Уссурийск · август 2025", text: "«Коса Назимова — открытие года. Такого чистого моря в Приморье я не видел. Закаты фантастические. Обязательно вернёмся.»" },
+            ].map((r) => (
+              <div key={r.name} className="review-card fade-up">
+                <div className="review-stars">★★★★★</div>
+                <p className="review-text">{r.text}</p>
+                <div className="review-author">
+                  <div className="review-avatar" style={{ background: r.color }}>{r.initials}</div>
+                  <div>
+                    <div className="review-name">{r.name}</div>
+                    <div className="review-city">{r.city}</div>
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                <div className="md:col-span-2">
-                  <button
-                    type="submit"
-                    className="btn-primary w-full py-4 rounded-xl font-oswald text-lg tracking-wide flex items-center justify-center gap-2"
-                  >
-                    <Icon name="Send" size={18} />
-                    Отправить заявку
-                  </button>
+      {/* PRICING */}
+      <section className="section pricing" id="pricing">
+        <div className="section-inner">
+          <p className="section-label fade-up">Стоимость</p>
+          <h2 className="section-title fade-up">Выберите свой формат</h2>
+          <p className="section-desc fade-up">Прозрачные цены без скрытых доплат. Все тарифы включают пляж, парковку и территорию базы.</p>
+          <div className="pricing-grid">
+            <div className="price-card fade-up">
+              <div className="price-name">Базовый</div>
+              <div className="price-desc">Всё необходимое для спокойного отдыха</div>
+              <div className="price-amount">4 500 ₽</div>
+              <div className="price-per">за домик / сутки</div>
+              <div className="price-features">
+                {["Уютный домик с бельём", "Собственный пляж", "Охраняемая парковка", "Беседка на территории"].map((f) => (
+                  <div key={f} className="price-feature">{f}</div>
+                ))}
+              </div>
+            </div>
+            <div className="price-card best fade-up">
+              <div className="price-name">Морской</div>
+              <div className="price-desc">Максимум активностей на воде</div>
+              <div className="price-amount">6 500 ₽</div>
+              <div className="price-per">за домик / сутки</div>
+              <div className="price-features">
+                {["Всё из «Базового»", "SUP-доска или каяк", "Мангал + беседка", "Удочки для рыбалки"].map((f) => (
+                  <div key={f} className="price-feature">{f}</div>
+                ))}
+              </div>
+            </div>
+            <div className="price-card fade-up">
+              <div className="price-name">Всё своё</div>
+              <div className="price-desc">Полный комплект впечатлений</div>
+              <div className="price-amount">8 500 ₽</div>
+              <div className="price-per">за домик / сутки</div>
+              <div className="price-features">
+                {["Всё из «Морского»", "Баня-бочка (2 часа)", "Приоритетный заезд", "Дети до 5 лет — бесплатно"].map((f) => (
+                  <div key={f} className="price-feature">{f}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="pricing-note">
+            <span>🎁 Раннее бронирование до 1 мая — скидка 15%</span>
+            <span>👨‍👩‍👧‍👦 Дети до 5 лет — бесплатно</span>
+            <span>📅 Минимальный заезд — 2 ночи</span>
+          </div>
+        </div>
+      </section>
+
+      {/* BOOKING */}
+      <section className="cta-section" id="booking">
+        <div className="cta-inner">
+          <p className="cta-label">Бронирование сезон 2026</p>
+          <h2 className="cta-title">Лето бронируют уже сейчас</h2>
+          <p className="cta-desc">Свободных мест на август осталось мало. Оставьте заявку — перезвоним в течение 15 минут и подтвердим даты.</p>
+          <div className="cta-urgency">🔥 Июль и август — почти заняты</div>
+          <div className="form-wrap fade-up">
+            {!formSubmitted ? (
+              <form onSubmit={handleSubmit}>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Ваше имя</label>
+                    <input className="form-input" type="text" placeholder="Иван Иванов" required
+                      value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Телефон / Telegram</label>
+                    <input className="form-input" type="tel" placeholder="+7 924 000-00-00" required
+                      value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Дата заезда</label>
+                    <input className="form-input" type="date" min="2026-06-01" max="2026-09-30" required
+                      style={{ colorScheme: "dark" }}
+                      value={form.checkin} onChange={(e) => setForm({ ...form, checkin: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Дата выезда</label>
+                    <input className="form-input" type="date" min="2026-06-03" max="2026-10-01" required
+                      style={{ colorScheme: "dark" }}
+                      value={form.checkout} onChange={(e) => setForm({ ...form, checkout: e.target.value })} />
+                  </div>
+                  <div className="form-group full">
+                    <label className="form-label">Количество гостей и пожелания</label>
+                    <input className="form-input" type="text" placeholder="2 взрослых + 1 ребёнок, хотим баню"
+                      value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} />
+                  </div>
                 </div>
+                <button type="submit" className="btn-submit">Отправить заявку →</button>
+                <p className="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Перезвоним в течение 15 минут.</p>
               </form>
             ) : (
-              <div className="text-center py-12">
-                <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
-                  style={{ background: "rgba(61,220,132,0.15)" }}
-                >
-                  <Icon name="CheckCircle" size={40} className="text-green-400" />
-                </div>
-                <h3 className="font-oswald text-2xl font-bold text-white mb-3">Заявка отправлена!</h3>
-                <p className="text-white/50">Мы перезвоним вам в течение 15 минут. Ждём вас на «Диком Берегу»!</p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="mt-6 text-green-400 text-sm hover:underline"
-                >
+              <div style={{ textAlign: "center", padding: "var(--space-8)" }}>
+                <div style={{ fontSize: "3rem", marginBottom: "var(--space-4)" }}>🎉</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "#fff", marginBottom: "var(--space-3)" }}>
+                  Заявка принята!
+                </h3>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "var(--text-sm)" }}>
+                  Мы свяжемся с вами в течение 15 минут для подтверждения брони.
+                </p>
+                <button onClick={() => setFormSubmitted(false)}
+                  style={{ marginTop: "var(--space-5)", color: "var(--color-gold)", fontSize: "var(--text-sm)", textDecoration: "underline" }}>
                   Отправить ещё одну заявку
                 </button>
               </div>
@@ -503,71 +396,57 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ═══════════════ CONTACTS ═══════════════ */}
-      <section id="contacts" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="section-tag mb-4 justify-center">Будем рады видеть вас</div>
-            <h2 className="font-oswald text-4xl md:text-5xl font-bold text-white">
-              <span className="neon-text">Контакты</span>
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: "Phone", title: "Телефон", value: "+7 (912) 345-67-89", sub: "Ежедневно 8:00–22:00" },
-              { icon: "MapPin", title: "Адрес", value: "Ленинградская обл.", sub: "с. Лесное, база «Дикий Берег»" },
-              { icon: "Mail", title: "Email", value: "info@dikiy-bereg.ru", sub: "Ответим в течение часа" },
-            ].map((c) => (
-              <div key={c.title} className="glass-card gradient-border rounded-2xl p-8 text-center service-card">
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: "rgba(61,220,132,0.12)" }}
-                >
-                  <Icon name={c.icon as "Phone"} size={26} className="text-green-400" />
+      {/* LOCATION */}
+      <section className="section location" id="location">
+        <div className="section-inner">
+          <p className="section-label fade-up">Как добраться</p>
+          <h2 className="section-title fade-up">Найти нас просто</h2>
+          <div className="location-grid">
+            <div className="location-info fade-up">
+              {[
+                { icon: "📍", title: "Адрес", desc: "Приморский край, Хасанский район, коса Назимова, база отдыха «Рейд Паллада»" },
+                { icon: "🚗", title: "На автомобиле", desc: "Из Владивостока по трассе А-189 — около 3 часов. Навигатор ведёт до ворот базы." },
+                { icon: "📞", title: "Телефон", desc: "+7 (XXX) XXX-XX-XX\nWhatsApp / Telegram" },
+                { icon: "⏰", title: "Сезон работы", desc: "Июнь — сентябрь 2026\nЗаезд с 14:00, выезд до 12:00" },
+              ].map((item) => (
+                <div key={item.title} className="location-item">
+                  <div className="location-icon">{item.icon}</div>
+                  <div>
+                    <div className="location-item-title">{item.title}</div>
+                    <div className="location-item-desc" style={{ whiteSpace: "pre-line" }}>{item.desc}</div>
+                  </div>
                 </div>
-                <div className="font-oswald text-lg font-bold text-white mb-1">{c.title}</div>
-                <div className="text-white/80 text-sm mb-1">{c.value}</div>
-                <div className="text-white/40 text-xs">{c.sub}</div>
+              ))}
+            </div>
+            <div className="map-wrap fade-up">
+              <div className="map-placeholder">
+                <div className="map-icon">🗺️</div>
+                <p>Коса Назимова</p>
+                <span>Хасанский район, Приморский край</span>
               </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-6 mt-12">
-            {[
-              { icon: "MessageCircle", label: "ВКонтакте" },
-              { icon: "Send", label: "Telegram" },
-              { icon: "Phone", label: "WhatsApp" },
-            ].map((s) => (
-              <button
-                key={s.label}
-                className="flex items-center gap-2 px-5 py-3 rounded-full glass-card text-sm text-white/70 hover:text-green-400 transition-colors"
-              >
-                <Icon name={s.icon as "Send"} size={16} />
-                {s.label}
-              </button>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ FOOTER ═══════════════ */}
-      <footer className="py-8 px-6 border-t text-center" style={{ borderColor: "var(--glass-border)" }}>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-oswald font-bold neon-text tracking-wider">ДИКИЙ</span>
-            <span className="font-oswald font-bold text-white tracking-wider">БЕРЕГ</span>
-          </div>
-          <p className="text-white/30 text-sm">© 2024 Туристическая база «Дикий Берег». Все права защищены.</p>
-          <div className="flex gap-4">
-            {NAV_LINKS.slice(1, 4).map((l) => (
-              <a key={l.href} href={l.href} className="text-white/30 text-sm hover:text-white/60 transition-colors">
-                {l.label}
-              </a>
-            ))}
-          </div>
+      {/* FOOTER */}
+      <footer className="footer">
+        <div className="footer-logo">Рейд <span>Паллада</span></div>
+        <div className="footer-copy">© 2026 База отдыха «Рейд Паллада»<br />Коса Назимова, Хасанский район</div>
+        <div className="footer-contacts">
+          <div className="footer-contact">📞 +7 (XXX) XXX-XX-XX</div>
+          <div className="footer-contact">💬 Telegram / WhatsApp</div>
+          <div className="footer-contact">📧 info@reid-pallada.ru</div>
         </div>
       </footer>
-    </div>
+
+      {/* STICKY BTN */}
+      <button
+        className={`sticky-btn${stickyVisible ? " visible" : ""}`}
+        onClick={() => scrollTo("booking")}
+      >
+        📅 Забронировать
+      </button>
+    </>
   );
 }
