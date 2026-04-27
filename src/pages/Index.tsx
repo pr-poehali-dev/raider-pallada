@@ -350,7 +350,7 @@ export default function Index() {
           <div className="pricing-note">
             <span>🎁 Раннее бронирование до 1 мая — скидка 15%</span>
             <span>👨‍👩‍👧‍👦 Дети до 5 лет — бесплатно</span>
-            <span>📅 Минимальный заезд — 2 ночи</span>
+
           </div>
         </div>
       </section>
