@@ -635,7 +635,34 @@ export default function Index() {
               </div>
             ))}
           </div>
-          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", marginTop: 10 }}>{galleryIdx + 1} / {galleryPhotos.length}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 10 }}>
+            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem" }}>{galleryIdx + 1} / {galleryPhotos.length}</div>
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                const pwd = prompt("Введите пароль для удаления:");
+                if (!pwd) return;
+                const photo = galleryPhotos[galleryIdx];
+                fetch("https://functions.poehali.dev/2d41df0f-841c-4976-89e7-a1528b2cc77a", {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ password: pwd, id: photo.id }),
+                }).then(r => r.json()).then(d => {
+                  if (d.ok) {
+                    const next = galleryPhotos.filter(p => p.id !== photo.id);
+                    setGalleryPhotos(next);
+                    if (next.length === 0) setGalleryOpen(false);
+                    else setGalleryIdx(i => Math.min(i, next.length - 1));
+                  } else {
+                    alert(d.error || "Неверный пароль");
+                  }
+                });
+              }}
+              style={{ background: "rgba(239,68,68,0.2)", border: "1px solid rgba(239,68,68,0.5)", color: "#fca5a5", borderRadius: 8, padding: "4px 12px", fontSize: "0.8rem", cursor: "pointer" }}
+            >
+              Удалить
+            </button>
+          </div>
         </div>
       )}
 
