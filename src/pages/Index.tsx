@@ -316,13 +316,18 @@ export default function Index() {
             <div className="price-card fade-up">
               <div className="price-name">Базовый</div>
               <div className="price-desc">Всё необходимое для спокойного отдыха</div>
-              <div className="price-amount">4 500 ₽</div>
-              <div className="price-per">за домик / сутки</div>
               <div className="price-features">
-                {["Уютный домик с бельём", "Собственный пляж", "Охраняемая парковка", "Беседка на территории"].map((f) => (
-                  <div key={f} className="price-feature">{f}</div>
+                {[
+                  { period: "1 — 15 июля", price: "3 000 ₽" },
+                  { period: "15 июля — 25 августа", price: "4 200 ₽" },
+                  { period: "25 августа — сентябрь", price: "3 000 ₽" },
+                ].map(({ period, price }) => (
+                  <div key={period} className="price-feature" style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                    <span>{period}</span><span style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{price}</span>
+                  </div>
                 ))}
               </div>
+              <div className="price-per">за домик / сутки</div>
             </div>
             <div className="price-card best fade-up">
               <div className="price-name">Морской</div>
