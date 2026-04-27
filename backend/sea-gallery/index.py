@@ -40,6 +40,18 @@ def handler(event: dict, context) -> dict:
         if password != UPLOAD_PASSWORD:
             return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
 
+        # Если передан готовый URL — просто сохраняем в БД
+        ready_url = body.get("url")
+        if ready_url:
+            media_type = "video" if ready_url.endswith((".mp4", ".mov", ".webm")) else "photo"
+            conn = get_db()
+            cur = conn.cursor()
+            cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url, media_type) VALUES (%s, %s) RETURNING id", (ready_url, media_type))
+            new_id = cur.fetchone()[0]
+            conn.commit()
+            conn.close()
+            return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": ready_url, "media_type": media_type})}
+
         file_b64 = body.get("image")
         content_type = body.get("content_type", "image/jpeg")
         if not file_b64:
