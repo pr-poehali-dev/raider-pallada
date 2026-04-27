@@ -434,8 +434,8 @@ export default function Index() {
             <div className="location-info fade-up">
               {[
                 { icon: "📍", title: "Адрес", desc: "Приморский край, Хасанский район, коса Назимова, база отдыха «Рейд Паллада»" },
-                { icon: "🚗", title: "На автомобиле", desc: "Из Владивостока по трассе А-189 — около 3 часов. Навигатор ведёт до ворот базы." },
-                { icon: "📞", title: "Телефон", desc: "+7 (XXX) XXX-XX-XX\nWhatsApp / Telegram" },
+                { icon: "🚗", title: "На автомобиле", desc: "Из Владивостока по трассе А-189 — около 4 часов. Навигатор ведёт до ворот базы." },
+                { icon: "📞", title: "Телефон", desc: "+7 (908) 441-83-82\nWhatsApp / Telegram" },
                 { icon: "⏰", title: "Сезон работы", desc: "Июнь — сентябрь 2026\nЗаезд с 14:00, выезд до 12:00" },
               ].map((item) => (
                 <div key={item.title} className="location-item">
