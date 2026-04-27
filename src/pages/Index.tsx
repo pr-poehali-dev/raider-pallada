@@ -33,27 +33,45 @@ export default function Index() {
     if (!uploadFile || !uploadPassword) return;
     setUploadLoading(true);
     setUploadError("");
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const b64 = (e.target?.result as string).split(",")[1];
-      try {
+    try {
+      const isVideo = uploadFile.type.startsWith("video/");
+      if (isVideo) {
+        // Для видео — presigned URL (прямая загрузка в S3)
         const res = await fetch(GALLERY_URL, {
-          method: "POST",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
+          body: JSON.stringify({ password: uploadPassword, content_type: uploadFile.type }),
         });
         const data = await res.json();
-        if (!res.ok) { setUploadError(data.error || "Ошибка"); }
-        else {
-          setGalleryPhotos(prev => [data, ...prev]);
-          setUploadOpen(false);
-          setUploadFile(null);
-          setUploadPassword("");
-        }
-      } catch { setUploadError("Ошибка загрузки"); }
-      setUploadLoading(false);
-    };
-    reader.readAsDataURL(uploadFile);
+        if (!res.ok) { setUploadError(data.error || "Ошибка"); setUploadLoading(false); return; }
+        await fetch(data.upload_url, { method: "PUT", headers: { "Content-Type": uploadFile.type }, body: uploadFile });
+        setGalleryPhotos(prev => [{ id: data.id, url: data.url, media_type: data.media_type }, ...prev]);
+      } else {
+        // Для фото — base64
+        const reader = new FileReader();
+        await new Promise<void>((resolve) => {
+          reader.onload = async (e) => {
+            const b64 = (e.target?.result as string).split(",")[1];
+            const res = await fetch(GALLERY_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
+            });
+            const data = await res.json();
+            if (!res.ok) { setUploadError(data.error || "Ошибка"); }
+            else { setGalleryPhotos(prev => [data, ...prev]); }
+            resolve();
+          };
+          reader.readAsDataURL(uploadFile);
+        });
+      }
+      if (!uploadError) {
+        setUploadOpen(false);
+        setUploadFile(null);
+        setUploadPassword("");
+      }
+    } catch { setUploadError("Ошибка загрузки"); }
+    setUploadLoading(false);
   };
 
   const handleDeletePhoto = async (id: number) => {

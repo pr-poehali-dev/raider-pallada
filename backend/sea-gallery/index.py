@@ -9,7 +9,7 @@ UPLOAD_PASSWORD = os.environ.get("GALLERY_PASSWORD", "морской2026")
 
 CORS = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Gallery-Password",
 }
 
@@ -74,6 +74,47 @@ def handler(event: dict, context) -> dict:
         conn.close()
 
         return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": url, "media_type": media_type})}
+
+    if method == "PUT":
+        # Генерация presigned URL для прямой загрузки видео/фото в S3
+        body = json.loads(event.get("body") or "{}")
+        password = body.get("password", "")
+        if password != UPLOAD_PASSWORD:
+            return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
+
+        content_type = body.get("content_type", "video/mp4")
+        is_video = content_type.startswith("video/")
+        media_type = "video" if is_video else "photo"
+        if "jpeg" in content_type:
+            ext = "jpg"
+        elif content_type == "video/quicktime":
+            ext = "mov"
+        else:
+            ext = content_type.split("/")[-1]
+        key = f"sea-gallery/{uuid.uuid4()}.{ext}"
+
+        import boto3
+        s3 = boto3.client(
+            "s3",
+            endpoint_url="https://bucket.poehali.dev",
+            aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        )
+        presigned_url = s3.generate_presigned_url(
+            "put_object",
+            Params={"Bucket": "files", "Key": key, "ContentType": content_type},
+            ExpiresIn=600,
+        )
+        cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url, media_type) VALUES (%s, %s) RETURNING id", (cdn_url, media_type))
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        conn.close()
+
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": cdn_url, "media_type": media_type, "upload_url": presigned_url})}
 
     if method == "DELETE":
         body = json.loads(event.get("body") or "{}")
