@@ -19,7 +19,7 @@ def get_db():
 
 
 def handler(event: dict, context) -> dict:
-    """Галерея домика Морской: получение фото (GET), загрузка (POST), удаление (DELETE)"""
+    """Галерея домика Морской: получение медиа (GET), загрузка фото/видео (POST), удаление (DELETE)"""
     if event.get("httpMethod") == "OPTIONS":
         return {"statusCode": 200, "headers": CORS, "body": ""}
 
@@ -28,10 +28,10 @@ def handler(event: dict, context) -> dict:
     if method == "GET":
         conn = get_db()
         cur = conn.cursor()
-        cur.execute(f"SELECT id, url, created_at FROM {SCHEMA}.sea_gallery ORDER BY created_at DESC")
+        cur.execute(f"SELECT id, url, media_type, created_at FROM {SCHEMA}.sea_gallery ORDER BY created_at DESC")
         rows = cur.fetchall()
         conn.close()
-        photos = [{"id": r[0], "url": r[1], "created_at": str(r[2])} for r in rows]
+        photos = [{"id": r[0], "url": r[1], "media_type": r[2] or "photo", "created_at": str(r[3])} for r in rows]
         return {"statusCode": 200, "headers": CORS, "body": json.dumps({"photos": photos})}
 
     if method == "POST":
@@ -40,14 +40,21 @@ def handler(event: dict, context) -> dict:
         if password != UPLOAD_PASSWORD:
             return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
 
-        image_b64 = body.get("image")
+        file_b64 = body.get("image")
         content_type = body.get("content_type", "image/jpeg")
-        if not image_b64:
+        if not file_b64:
             return {"statusCode": 400, "headers": CORS, "body": json.dumps({"error": "Нет файла"})}
 
-        ext = "jpg" if "jpeg" in content_type else content_type.split("/")[-1]
+        is_video = content_type.startswith("video/")
+        media_type = "video" if is_video else "photo"
+        if "jpeg" in content_type:
+            ext = "jpg"
+        elif content_type == "video/quicktime":
+            ext = "mov"
+        else:
+            ext = content_type.split("/")[-1]
         key = f"sea-gallery/{uuid.uuid4()}.{ext}"
-        data = base64.b64decode(image_b64)
+        data = base64.b64decode(file_b64)
 
         import boto3
         s3 = boto3.client(
@@ -61,12 +68,12 @@ def handler(event: dict, context) -> dict:
 
         conn = get_db()
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url) VALUES (%s) RETURNING id", (url,))
+        cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url, media_type) VALUES (%s, %s) RETURNING id", (url, media_type))
         new_id = cur.fetchone()[0]
         conn.commit()
         conn.close()
 
-        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": url})}
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": url, "media_type": media_type})}
 
     if method == "DELETE":
         body = json.loads(event.get("body") or "{}")
