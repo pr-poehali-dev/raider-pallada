@@ -11,10 +11,14 @@ export default function Index() {
   const [agreed, setAgreed] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [seaCardModalOpen, setSeaCardModalOpen] = useState(false);
-  const [galleryPhotos, setGalleryPhotos] = useState<{id: number; url: string; media_type: string; thumbnail?: string}[]>([]);
+  type GalleryPhoto = {id: number; url: string; media_type: string; thumbnail?: string};
+  type GalleryCategory = "sea" | "basic" | "comfort" | "family";
+  const [galleries, setGalleries] = useState<Record<GalleryCategory, GalleryPhoto[]>>({ sea: [], basic: [], comfort: [], family: [] });
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIdx, setGalleryIdx] = useState(0);
+  const [galleryCategory, setGalleryCategory] = useState<GalleryCategory>("sea");
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [uploadCategory, setUploadCategory] = useState<GalleryCategory>("sea");
   const [uploadPassword, setUploadPassword] = useState("");
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -23,11 +27,18 @@ export default function Index() {
   const GALLERY_URL = "https://functions.poehali.dev/2d41df0f-841c-4976-89e7-a1528b2cc77a";
 
   useEffect(() => {
-    fetch(GALLERY_URL)
-      .then(r => r.json())
-      .then(d => setGalleryPhotos(d.photos || []))
-      .catch(() => {});
+    const cats: GalleryCategory[] = ["sea", "basic", "comfort", "family"];
+    cats.forEach(cat => {
+      fetch(`${GALLERY_URL}?category=${cat}`)
+        .then(r => r.json())
+        .then(d => setGalleries(prev => ({ ...prev, [cat]: d.photos || [] })))
+        .catch(() => {});
+    });
   }, []);
+
+  const openGallery = (cat: GalleryCategory, idx = 0) => { setGalleryCategory(cat); setGalleryIdx(idx); setGalleryOpen(true); };
+  const openUpload = (cat: GalleryCategory) => { setUploadCategory(cat); setUploadOpen(true); };
+  const galleryPhotos = galleries[galleryCategory];
 
   const handleUpload = async () => {
     if (!uploadFile || !uploadPassword) return;
@@ -89,11 +100,11 @@ export default function Index() {
         const res = await fetch(GALLERY_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
+          body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type, category: uploadCategory }),
         });
         const data = await res.json();
         if (!res.ok) { setUploadError(data.error || "Ошибка"); setUploadLoading(false); return; }
-        setGalleryPhotos(prev => [data, ...prev]);
+        setGalleries(prev => ({ ...prev, [uploadCategory]: [data, ...prev[uploadCategory]] }));
       }
       setUploadOpen(false);
       setUploadFile(null);
@@ -102,13 +113,13 @@ export default function Index() {
     setUploadLoading(false);
   };
 
-  const handleDeletePhoto = async (id: number) => {
+  const handleDeletePhoto = async (id: number, cat: GalleryCategory) => {
     await fetch(GALLERY_URL, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: uploadPassword, id }),
     });
-    setGalleryPhotos(prev => prev.filter(p => p.id !== id));
+    setGalleries(prev => ({ ...prev, [cat]: prev[cat].filter(p => p.id !== id) }));
   };
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -432,13 +443,22 @@ export default function Index() {
                   <div key={f} className="price-feature">{f}</div>
                 ))}
               </div>
+              <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
+                {galleries.basic.slice(0, 4).map((p, i) => (
+                  <div key={p.id} onClick={() => openGallery("basic", i)} style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.25)", flexShrink: 0, position: "relative", background: "#000" }}>
+                    {p.media_type === "video" ? <><img src={p.thumbnail || ""} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.3)" }}><span style={{ fontSize: "0.9rem" }}>▶</span></div></> : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                    {i === 3 && galleries.basic.length > 4 && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>+{galleries.basic.length - 4}</div>}
+                  </div>
+                ))}
+                <div onClick={() => openUpload("basic")} style={{ width: 48, height: 48, borderRadius: 8, border: "1.5px dashed rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem", flexShrink: 0 }}>+</div>
+              </div>
             </div>
             <div
               className="price-card best fade-up"
               style={{ position: "relative", overflow: "hidden", cursor: "default" }}
             >
               {/* Фон — первое фото из галереи или дефолтное */}
-              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${galleryPhotos[0]?.url || "https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/e29416ee-3932-4c25-af80-2f7234362e42.jpg"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${galleries.sea[0]?.url || "https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/e29416ee-3932-4c25-af80-2f7234362e42.jpg"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.78) 100%)" }} />
               <div style={{ position: "relative", zIndex: 1 }}>
                 <div className="price-name">Морской</div>
@@ -464,8 +484,8 @@ export default function Index() {
 
                 {/* Галерея миниатюр */}
                 <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
-                  {galleryPhotos.slice(0, 4).map((p, i) => (
-                    <div key={p.id} onClick={() => { setGalleryIdx(i); setGalleryOpen(true); }} style={{ width: 52, height: 52, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.3)", flexShrink: 0, position: "relative", background: "#000" }}>
+                  {galleries.sea.slice(0, 4).map((p, i) => (
+                    <div key={p.id} onClick={() => openGallery("sea", i)} style={{ width: 52, height: 52, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.3)", flexShrink: 0, position: "relative", background: "#000" }}>
                       {p.media_type === "video"
                         ? <>
                             {p.thumbnail
@@ -478,8 +498,8 @@ export default function Index() {
                           </>
                         : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       }
-                      {i === 3 && galleryPhotos.length > 4 && (
-                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>+{galleryPhotos.length - 4}</div>
+                      {i === 3 && galleries.sea.length > 4 && (
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>+{galleries.sea.length - 4}</div>
                       )}
                     </div>
                   ))}
@@ -508,6 +528,15 @@ export default function Index() {
                   <div key={f} className="price-feature">{f}</div>
                 ))}
               </div>
+              <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
+                {galleries.comfort.slice(0, 4).map((p, i) => (
+                  <div key={p.id} onClick={() => openGallery("comfort", i)} style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.25)", flexShrink: 0, position: "relative", background: "#000" }}>
+                    {p.media_type === "video" ? <><img src={p.thumbnail || ""} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.3)" }}><span style={{ fontSize: "0.9rem" }}>▶</span></div></> : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                    {i === 3 && galleries.comfort.length > 4 && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>+{galleries.comfort.length - 4}</div>}
+                  </div>
+                ))}
+                <div onClick={() => openUpload("comfort")} style={{ width: 48, height: 48, borderRadius: 8, border: "1.5px dashed rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem", flexShrink: 0 }}>+</div>
+              </div>
             </div>
             <div className="price-card fade-up">
               <div className="price-name">Семейный</div>
@@ -529,6 +558,15 @@ export default function Index() {
                 {["Уютный домик с бельём", "Холодильник, вентилятор", "Большая закрытая веранда", "Мангальная зона"].map((f) => (
                   <div key={f} className="price-feature">{f}</div>
                 ))}
+              </div>
+              <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
+                {galleries.family.slice(0, 4).map((p, i) => (
+                  <div key={p.id} onClick={() => openGallery("family", i)} style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.25)", flexShrink: 0, position: "relative", background: "#000" }}>
+                    {p.media_type === "video" ? <><img src={p.thumbnail || ""} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.3)" }}><span style={{ fontSize: "0.9rem" }}>▶</span></div></> : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                    {i === 3 && galleries.family.length > 4 && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>+{galleries.family.length - 4}</div>}
+                  </div>
+                ))}
+                <div onClick={() => openUpload("family")} style={{ width: 48, height: 48, borderRadius: 8, border: "1.5px dashed rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem", flexShrink: 0 }}>+</div>
               </div>
             </div>
           </div>
@@ -734,14 +772,14 @@ export default function Index() {
                 const pwd = prompt("Введите пароль для удаления:");
                 if (!pwd) return;
                 const photo = galleryPhotos[galleryIdx];
-                fetch("https://functions.poehali.dev/2d41df0f-841c-4976-89e7-a1528b2cc77a", {
+                fetch(GALLERY_URL, {
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ password: pwd, id: photo.id }),
                 }).then(r => r.json()).then(d => {
                   if (d.ok) {
-                    const next = galleryPhotos.filter(p => p.id !== photo.id);
-                    setGalleryPhotos(next);
+                    const next = galleries[galleryCategory].filter(p => p.id !== photo.id);
+                    setGalleries(prev => ({ ...prev, [galleryCategory]: next }));
                     if (next.length === 0) setGalleryOpen(false);
                     else setGalleryIdx(i => Math.min(i, next.length - 1));
                   } else {
@@ -762,7 +800,8 @@ export default function Index() {
         <div onClick={() => setUploadOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#1a1a2e", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", position: "relative" }}>
             <button onClick={() => setUploadOpen(false)} style={{ position: "absolute", top: 12, right: 12, background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", fontSize: 18 }}>×</button>
-            <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", marginBottom: 18 }}>Добавить фото или видео</div>
+            <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", marginBottom: 4 }}>Добавить фото или видео</div>
+            <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", marginBottom: 16 }}>{{ sea: "Морской", basic: "Базовый", comfort: "Мини комфорт", family: "Семейный" }[uploadCategory]}</div>
             <input type="file" accept="image/*,video/*" onChange={e => setUploadFile(e.target.files?.[0] || null)} style={{ width: "100%", marginBottom: 12, color: "#fff", fontSize: "0.85rem" }} />
             <input type="password" placeholder="Пароль" value={uploadPassword} onChange={e => setUploadPassword(e.target.value)} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.07)", color: "#fff", fontSize: "0.9rem", marginBottom: 12, boxSizing: "border-box" }} />
             {uploadError && <div style={{ color: "#f87171", fontSize: "0.82rem", marginBottom: 10 }}>{uploadError}</div>}
