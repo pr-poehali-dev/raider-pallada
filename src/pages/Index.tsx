@@ -330,7 +330,7 @@ export default function Index() {
               </div>
               <div className="price-per" style={{ marginBottom: 14 }}>за домик / сутки</div>
               <div className="price-features">
-                {["Уютный домик с бельём", "Мангальная зона"].map((f) => (
+                {["Уютный домик с бельём", "Мангальная зона", "Большая закрытая веранда"].map((f) => (
                   <div key={f} className="price-feature">{f}</div>
                 ))}
               </div>
