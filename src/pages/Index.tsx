@@ -394,7 +394,7 @@ export default function Index() {
                   </div>
                 </div>
                 <button type="submit" className="btn-submit">Отправить заявку →</button>
-                <p className="form-note">Нажимая кнопку, вы соглашаетесь на <a href="/privacy" target="_blank" style={{ color: "var(--color-gold)", textDecoration: "underline" }}>обработку персональных данных</a>. Перезвоним в течение 15 минут.</p>
+                <p className="form-note">Нажимая кнопку, вы соглашаетесь на <a href="/privacy" target="_blank" style={{ color: "var(--color-gold)", textDecoration: "underline" }}>обработку персональных данных</a>.</p>
               </form>
             ) : (
               <div style={{ textAlign: "center", padding: "var(--space-8)" }}>
