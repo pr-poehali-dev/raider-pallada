@@ -161,39 +161,15 @@ export default function Index() {
           <h2 className="section-title fade-up">Коса Назимова —<br />особенное место Приморья</h2>
           <div className="place-grid">
             <div className="place-img-wrap fade-up">
-              <svg viewBox="0 0 400 300" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} aria-hidden="true">
-                <defs>
-                  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0d3a44"/>
-                    <stop offset="100%" stopColor="#2d8a6e"/>
-                  </linearGradient>
-                  <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#1a6070"/>
-                    <stop offset="100%" stopColor="#0d3a44"/>
-                  </linearGradient>
-                </defs>
-                <rect width="400" height="300" fill="url(#sky)"/>
-                <circle cx="300" cy="80" r="36" fill="#d4a943" opacity="0.9"/>
-                <circle cx="300" cy="80" r="50" fill="#d4a943" opacity="0.15"/>
-                <rect y="160" width="400" height="140" fill="url(#sea)"/>
-                <path d="M0,170 Q50,155 100,168 Q150,181 200,165 Q250,149 300,162 Q350,175 400,162 L400,185 Q350,198 300,185 Q250,172 200,188 Q150,204 100,190 Q50,176 0,192 Z" fill="rgba(255,255,255,0.08)"/>
-                <path d="M0,195 Q60,180 120,193 Q180,206 240,192 Q300,178 360,191 Q390,197 400,192 L400,210 Q370,215 340,210 Q280,200 220,214 Q160,228 100,214 Q50,202 0,214 Z" fill="rgba(255,255,255,0.06)"/>
-                <path d="M0,200 Q100,185 200,198 Q300,211 400,200 L400,220 Q300,230 200,218 Q100,206 0,220 Z" fill="#c8a06a" opacity="0.5"/>
-                <g fill="#1a4a38" opacity="0.85">
-                  <path d="M30,160 L38,110 L46,160 Z"/>
-                  <path d="M26,145 L38,100 L50,145 Z"/>
-                  <rect x="35" y="160" width="6" height="20" fill="#3a2a1a"/>
-                  <path d="M70,155 L77,112 L84,155 Z"/>
-                  <path d="M67,142 L77,105 L87,142 Z"/>
-                  <rect x="74" y="155" width="6" height="18" fill="#3a2a1a"/>
-                  <path d="M360,150 L368,105 L376,150 Z"/>
-                  <path d="M356,135 L368,95 L380,135 Z"/>
-                  <rect x="364" y="150" width="8" height="22" fill="#3a2a1a"/>
-                </g>
-                <path d="M185,180 Q200,170 215,180 L212,188 L188,188 Z" fill="rgba(255,255,255,0.6)"/>
-                <line x1="200" y1="170" x2="200" y2="152" stroke="rgba(255,255,255,0.5)" strokeWidth="1"/>
-                <path d="M200,153 L210,162 L200,162 Z" fill="rgba(255,255,255,0.4)"/>
-              </svg>
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+              >
+                <source src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/7b56cf49-4bec-455b-9504-6494ba64f395.mp4" type="video/mp4" />
+              </video>
               <div className="place-img-overlay">
                 <div className="place-img-tag">📍 Хасанский район, Приморский край</div>
               </div>
