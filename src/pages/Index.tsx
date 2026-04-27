@@ -483,11 +483,7 @@ export default function Index() {
                       )}
                     </div>
                   ))}
-                  {galleryPhotos.length > 0 && (
-                    <div onClick={() => { setGalleryIdx(0); setGalleryOpen(true); }} style={{ width: 52, height: 52, borderRadius: 8, border: "2px dashed rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem" }}>⤢</div>
-                  )}
-                  {/* Кнопка загрузки */}
-                  <div onClick={() => setUploadOpen(true)} style={{ width: 52, height: 52, borderRadius: 8, border: "1.5px dashed rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.8)", fontSize: "1.6rem", flexShrink: 0 }}>+</div>
+
                 </div>
               </div>
             </div>
