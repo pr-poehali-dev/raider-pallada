@@ -452,6 +452,19 @@ export default function Index() {
         </div>
       </footer>
 
+      {/* TELEGRAM BTN */}
+      <a
+        href="https://t.me/reidpallada"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="tg-btn"
+        aria-label="Написать в Telegram"
+      >
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.944 2.338a1.5 1.5 0 0 0-1.536-.207L2.604 9.287a1.5 1.5 0 0 0 .104 2.794l3.994 1.278 1.795 5.54a1.5 1.5 0 0 0 2.495.577l2.24-2.39 3.863 2.898a1.5 1.5 0 0 0 2.348-1.01L22.494 3.82a1.5 1.5 0 0 0-.55-1.482zm-8.38 11.148-1.53 1.634-.42-3.074 7.23-7.713-5.28 9.153z" fill="white"/>
+        </svg>
+      </a>
+
       {/* STICKY BTN */}
       <button
         className={`sticky-btn${stickyVisible ? " visible" : ""}`}
