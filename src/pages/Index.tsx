@@ -36,41 +36,69 @@ export default function Index() {
     try {
       const isVideo = uploadFile.type.startsWith("video/");
       if (isVideo) {
-        // Для видео — presigned URL (прямая загрузка в S3)
-        const res = await fetch(GALLERY_URL, {
+        // Видео: чанки по 3MB через бекенд (multipart)
+        const CHUNK = 3 * 1024 * 1024;
+        const total = uploadFile.size;
+        const chunks = Math.ceil(total / CHUNK);
+
+        // 1. Инициируем multipart upload
+        const initRes = await fetch(GALLERY_URL + "?action=init", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password: uploadPassword, content_type: uploadFile.type }),
         });
-        const data = await res.json();
-        if (!res.ok) { setUploadError(data.error || "Ошибка"); setUploadLoading(false); return; }
-        await fetch(data.upload_url, { method: "PUT", headers: { "Content-Type": uploadFile.type }, body: uploadFile });
-        setGalleryPhotos(prev => [{ id: data.id, url: data.url, media_type: data.media_type }, ...prev]);
+        const initData = await initRes.json();
+        if (!initRes.ok) { setUploadError(initData.error || "Ошибка"); setUploadLoading(false); return; }
+        const { upload_id, key } = initData;
+
+        // 2. Загружаем чанки
+        const parts: { ETag: string; PartNumber: number }[] = [];
+        for (let i = 0; i < chunks; i++) {
+          const slice = uploadFile.slice(i * CHUNK, (i + 1) * CHUNK);
+          const b64 = await new Promise<string>((resolve) => {
+            const r = new FileReader();
+            r.onload = (e) => resolve((e.target!.result as string).split(",")[1]);
+            r.readAsDataURL(slice);
+          });
+          const partRes = await fetch(GALLERY_URL + "?action=part", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ upload_id, key, part_number: i + 1, data: b64 }),
+          });
+          const partData = await partRes.json();
+          if (!partRes.ok) { setUploadError("Ошибка загрузки части"); setUploadLoading(false); return; }
+          parts.push({ ETag: partData.etag, PartNumber: i + 1 });
+        }
+
+        // 3. Завершаем upload
+        const completeRes = await fetch(GALLERY_URL + "?action=complete", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: uploadPassword, upload_id, key, parts, content_type: uploadFile.type }),
+        });
+        const completeData = await completeRes.json();
+        if (!completeRes.ok) { setUploadError(completeData.error || "Ошибка"); setUploadLoading(false); return; }
+        setGalleryPhotos(prev => [{ id: completeData.id, url: completeData.url, media_type: completeData.media_type }, ...prev]);
       } else {
-        // Для фото — base64
-        const reader = new FileReader();
-        await new Promise<void>((resolve) => {
-          reader.onload = async (e) => {
-            const b64 = (e.target?.result as string).split(",")[1];
-            const res = await fetch(GALLERY_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
-            });
-            const data = await res.json();
-            if (!res.ok) { setUploadError(data.error || "Ошибка"); }
-            else { setGalleryPhotos(prev => [data, ...prev]); }
-            resolve();
-          };
+        // Фото — base64
+        const b64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve((e.target!.result as string).split(",")[1]);
           reader.readAsDataURL(uploadFile);
         });
+        const res = await fetch(GALLERY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setUploadError(data.error || "Ошибка"); setUploadLoading(false); return; }
+        setGalleryPhotos(prev => [data, ...prev]);
       }
-      if (!uploadError) {
-        setUploadOpen(false);
-        setUploadFile(null);
-        setUploadPassword("");
-      }
-    } catch { setUploadError("Ошибка загрузки"); }
+      setUploadOpen(false);
+      setUploadFile(null);
+      setUploadPassword("");
+    } catch (e) { setUploadError("Ошибка загрузки"); }
     setUploadLoading(false);
   };
 
