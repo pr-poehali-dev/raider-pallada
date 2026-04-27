@@ -310,47 +310,27 @@ export default function Index() {
       <section className="section pricing" id="pricing">
         <div className="section-inner">
           <p className="section-label fade-up">Стоимость</p>
-          <h2 className="section-title fade-up">Выберите свой формат</h2>
-          <p className="section-desc fade-up">Прозрачные цены без скрытых доплат. Все тарифы включают пляж, парковку и территорию базы.</p>
+          <h2 className="section-title fade-up">Цены на сезон 2025</h2>
+          <p className="section-desc fade-up">Прозрачные цены без скрытых доплат. Пляж, парковка и территория базы включены.</p>
           <div className="pricing-grid">
             <div className="price-card fade-up">
-              <div className="price-name">Базовый</div>
-              <div className="price-desc">Всё необходимое для спокойного отдыха</div>
-              <div className="price-amount">4 500 ₽</div>
+              <div className="price-name">1 — 15 июля</div>
+              <div className="price-amount">3 000 ₽</div>
               <div className="price-per">за домик / сутки</div>
-              <div className="price-features">
-                {["Уютный домик с бельём", "Собственный пляж", "Охраняемая парковка", "Беседка на территории"].map((f) => (
-                  <div key={f} className="price-feature">{f}</div>
-                ))}
-              </div>
             </div>
             <div className="price-card best fade-up">
-              <div className="price-name">Морской</div>
-              <div className="price-desc">Максимум активностей на воде</div>
-              <div className="price-amount">6 500 ₽</div>
+              <div className="price-name">16 июля — 25 августа</div>
+              <div className="price-amount">4 200 ₽</div>
               <div className="price-per">за домик / сутки</div>
-              <div className="price-features">
-                {["Всё из «Базового»", "SUP-доска или каяк", "Мангал + беседка", "Удочки для рыбалки"].map((f) => (
-                  <div key={f} className="price-feature">{f}</div>
-                ))}
-              </div>
             </div>
             <div className="price-card fade-up">
-              <div className="price-name">Всё своё</div>
-              <div className="price-desc">Полный комплект впечатлений</div>
-              <div className="price-amount">8 500 ₽</div>
+              <div className="price-name">26 августа — 15 сентября</div>
+              <div className="price-amount">3 000 ₽</div>
               <div className="price-per">за домик / сутки</div>
-              <div className="price-features">
-                {["Всё из «Морского»", "Баня-бочка (2 часа)", "Приоритетный заезд", "Дети до 5 лет — бесплатно"].map((f) => (
-                  <div key={f} className="price-feature">{f}</div>
-                ))}
-              </div>
             </div>
           </div>
           <div className="pricing-note">
-            <span>🎁 Раннее бронирование до 1 мая — скидка 15%</span>
             <span>👨‍👩‍👧‍👦 Дети до 5 лет — бесплатно</span>
-
           </div>
         </div>
       </section>
