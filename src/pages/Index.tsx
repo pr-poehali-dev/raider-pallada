@@ -8,6 +8,7 @@ export default function Index() {
   const [stickyVisible, setStickyVisible] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", checkin: "", checkout: "", guests: "" });
+  const [agreed, setAgreed] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -393,8 +394,17 @@ export default function Index() {
                       value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} />
                   </div>
                 </div>
-                <button type="submit" className="btn-submit">Отправить заявку →</button>
-                <p className="form-note">Нажимая кнопку, вы соглашаетесь на <a href="/privacy" target="_blank" style={{ color: "var(--color-gold)", textDecoration: "underline" }}>обработку персональных данных</a>.</p>
+                <button type="submit" className="btn-submit" disabled={!agreed}
+                  style={{ opacity: agreed ? 1 : 0.4, cursor: agreed ? "pointer" : "not-allowed" }}>
+                  Отправить заявку →
+                </button>
+                <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12, cursor: "pointer" }}>
+                  <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
+                    style={{ width: 18, height: 18, accentColor: "var(--color-gold)", cursor: "pointer" }} />
+                  <span className="form-note" style={{ margin: 0 }}>
+                    Я согласен на <a href="/privacy" target="_blank" style={{ color: "var(--color-gold)", textDecoration: "underline" }}>обработку персональных данных</a>
+                  </span>
+                </label>
               </form>
             ) : (
               <div style={{ textAlign: "center", padding: "var(--space-8)" }}>
