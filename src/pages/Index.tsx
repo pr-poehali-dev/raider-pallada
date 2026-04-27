@@ -657,7 +657,6 @@ export default function Index() {
               {[
                 { icon: "📍", title: "Адрес", desc: "Приморский край, Хасанский район, коса Назимова, база отдыха «Рейд Паллада»" },
                 { icon: "🚗", title: "На автомобиле", desc: "Из Владивостока по трассе А-189 — около 4 часов. Навигатор ведёт до ворот базы." },
-                { icon: "📞", title: "Телефон", desc: "Max: +7 (908) 441-83-82\nWhatsApp / Telegram" },
                 { icon: "⏰", title: "Сезон работы", desc: "Июнь — сентябрь 2026\nЗаезд с 14:00, выезд до 12:00" },
               ].map((item) => (
                 <div key={item.title} className="location-item">
@@ -668,6 +667,16 @@ export default function Index() {
                   </div>
                 </div>
               ))}
+              <div className="location-item">
+                <div className="location-icon">📞</div>
+                <div>
+                  <div className="location-item-title">Телефон</div>
+                  <div className="location-item-desc">
+                    Max: <a href="tel:+79084418382" style={{ color: "var(--color-gold)", textDecoration: "none", fontWeight: 600 }}>+7 (908) 441-83-82</a>
+                    <br />WhatsApp / Telegram
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="map-wrap fade-up">
               <iframe
