@@ -10,6 +10,7 @@ export default function Index() {
   const [form, setForm] = useState({ name: "", phone: "", checkin: "", checkout: "", guests: "" });
   const [agreed, setAgreed] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [seaCardModalOpen, setSeaCardModalOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -333,7 +334,12 @@ export default function Index() {
                 ))}
               </div>
             </div>
-            <div className="price-card best fade-up">
+            <div className="price-card best fade-up" onClick={() => setSeaCardModalOpen(true)} style={{ cursor: "pointer" }}>
+              <div style={{ position: "relative", margin: "-20px -20px 14px -20px", borderRadius: "16px 16px 0 0", overflow: "hidden", height: 180 }}>
+                <img src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG" alt="Вид из домика" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5) 100%)" }} />
+                <div style={{ position: "absolute", bottom: 8, right: 10, fontSize: "0.72rem", color: "rgba(255,255,255,0.8)", background: "rgba(0,0,0,0.35)", padding: "2px 8px", borderRadius: 20 }}>нажми, чтобы увидеть фото</div>
+              </div>
               <div className="price-name">Морской</div>
               <div className="price-desc">3–4 человека, включая детей</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
@@ -524,6 +530,39 @@ export default function Index() {
       >
         📅 Забронировать
       </button>
+
+      {/* SEA CARD PHOTO MODAL */}
+      {seaCardModalOpen && (
+        <div
+          onClick={() => setSeaCardModalOpen(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 200,
+            background: "rgba(0,0,0,0.9)", backdropFilter: "blur(8px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 20,
+          }}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 480, width: "100%" }}>
+            <button
+              onClick={() => setSeaCardModalOpen(false)}
+              style={{
+                position: "absolute", top: -44, right: 0, zIndex: 1,
+                color: "#fff", fontSize: 28, lineHeight: 1,
+                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "50%", width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >×</button>
+            <img
+              src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG"
+              alt="Вид из домика на море"
+              style={{ width: "100%", borderRadius: 16, display: "block" }}
+            />
+            <div style={{ textAlign: "center", marginTop: 12, color: "rgba(255,255,255,0.7)", fontSize: "0.9rem" }}>Вид из окна домика «Морской»</div>
+          </div>
+        </div>
+      )}
 
       {/* VIDEO MODAL */}
       {videoModalOpen && (
