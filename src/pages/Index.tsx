@@ -448,11 +448,14 @@ export default function Index() {
               ))}
             </div>
             <div className="map-wrap fade-up">
-              <div className="map-placeholder">
-                <div className="map-icon">🗺️</div>
-                <p>Коса Назимова</p>
-                <span>Хасанский район, Приморский край</span>
-              </div>
+              <iframe
+                src="https://yandex.ru/map-widget/v1/?ll=131.033&z=12&pt=131.033,42.616&text=%D0%A0%D0%B5%D0%B9%D0%B4%20%D0%9F%D0%B0%D0%BB%D0%BB%D0%B0%D0%B4%D0%B0"
+                width="100%"
+                height="400"
+                style={{ border: "none", borderRadius: 12, display: "block" }}
+                allowFullScreen
+                title="Карта — база отдыха Рейд Паллада"
+              />
             </div>
           </div>
         </div>
