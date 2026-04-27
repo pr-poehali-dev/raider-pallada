@@ -403,7 +403,7 @@ export default function Index() {
                   Заявка принята!
                 </h3>
                 <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "var(--text-sm)" }}>
-                  Мы свяжемся с вами в течение 15 минут для подтверждения брони.
+                  Спасибо! Мы свяжемся с вами в ближайшее время.
                 </p>
                 <button onClick={() => setFormSubmitted(false)}
                   style={{ marginTop: "var(--space-5)", color: "var(--color-gold)", fontSize: "var(--text-sm)", textDecoration: "underline" }}>
