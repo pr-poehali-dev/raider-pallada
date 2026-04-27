@@ -489,6 +489,9 @@
   background: linear-gradient(135deg, #1a5c6b, #2d8a6e, #1a4a38);
   box-shadow: var(--shadow-lg);
 }
+.place-img-wrap:hover .place-play-btn {
+  opacity: 1 !important;
+}
 .place-img-overlay {
   position: absolute;
   inset: 0;

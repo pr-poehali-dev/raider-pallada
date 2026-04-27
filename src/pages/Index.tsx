@@ -8,6 +8,7 @@ export default function Index() {
   const [stickyVisible, setStickyVisible] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", checkin: "", checkout: "", guests: "" });
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -160,7 +161,11 @@ export default function Index() {
           <p className="section-label fade-up">О месте</p>
           <h2 className="section-title fade-up">Коса Назимова —<br />особенное место Приморья</h2>
           <div className="place-grid">
-            <div className="place-img-wrap fade-up">
+            <div
+              className="place-img-wrap fade-up"
+              onClick={() => setVideoModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            >
               <video
                 autoPlay
                 muted
@@ -172,6 +177,21 @@ export default function Index() {
               </video>
               <div className="place-img-overlay">
                 <div className="place-img-tag">📍 Хасанский район, Приморский край</div>
+              </div>
+              <div style={{
+                position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                zIndex: 3, opacity: 0, transition: "opacity 0.2s",
+              }}
+                className="place-play-btn"
+              >
+                <div style={{
+                  width: 64, height: 64, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
+                  border: "2px solid rgba(255,255,255,0.4)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+                </div>
               </div>
             </div>
             <div className="place-features fade-up">
@@ -439,6 +459,47 @@ export default function Index() {
       >
         📅 Забронировать
       </button>
+
+      {/* VIDEO MODAL */}
+      {videoModalOpen && (
+        <div
+          onClick={() => setVideoModalOpen(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 200,
+            background: "rgba(0,0,0,0.85)", backdropFilter: "blur(6px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "var(--space-8)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: "relative", width: "100%", maxWidth: "60vw", maxHeight: "60vh" }}
+          >
+            <button
+              onClick={() => setVideoModalOpen(false)}
+              style={{
+                position: "absolute", top: -44, right: 0, zIndex: 1,
+                color: "#fff", fontSize: 28, lineHeight: 1,
+                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "50%", width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer",
+              }}
+              aria-label="Закрыть"
+            >
+              ×
+            </button>
+            <video
+              autoPlay
+              controls
+              playsInline
+              style={{ width: "100%", maxHeight: "60vh", borderRadius: "var(--radius-xl)", display: "block" }}
+            >
+              <source src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/7b56cf49-4bec-455b-9504-6494ba64f395.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      )}
     </>
   );
 }
