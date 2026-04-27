@@ -319,12 +319,12 @@ export default function Index() {
               <div className="price-per">за домик / сутки</div>
             </div>
             <div className="price-card best fade-up">
-              <div className="price-name">16 июля — 25 августа</div>
+              <div className="price-name">15 июля — 25 августа</div>
               <div className="price-amount">4 200 ₽</div>
               <div className="price-per">за домик / сутки</div>
             </div>
             <div className="price-card fade-up">
-              <div className="price-name">26 августа — 15 сентября</div>
+              <div className="price-name">25 августа — сентябрь</div>
               <div className="price-amount">3 000 ₽</div>
               <div className="price-per">за домик / сутки</div>
             </div>
