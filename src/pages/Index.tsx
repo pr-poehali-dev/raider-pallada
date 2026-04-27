@@ -227,7 +227,7 @@ export default function Index() {
             Хасанский район · Коса Назимова · Сезон 2026
           </div>
           <h1>Рейд <em>Паллада</em></h1>
-          <p className="hero-sub">Два берега, одна Коса, Бесконечное лето.</p>
+          <p className="hero-sub" style={{ fontSize: "clamp(1.4rem, 4vw, 2.2rem)", fontWeight: 700, letterSpacing: "0.02em", lineHeight: 1.3 }}>Два берега, одна Коса, Бесконечное лето.</p>
           <p className="hero-sub" style={{ marginTop: 10 }}>База отдыха «Рейд Паллада» — это не отель со звёздами. Это лучше. Здесь нет wi-fi, зато есть свежий воздух, закаты и полная тишина.</p>
           <div className="hero-actions">
             <a href="#booking" className="btn-hero" onClick={(e) => { e.preventDefault(); scrollTo("booking"); }}>
