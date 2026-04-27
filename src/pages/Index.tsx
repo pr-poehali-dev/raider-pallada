@@ -488,7 +488,7 @@ export default function Index() {
               </div>
             </div>
             <div className="price-card fade-up">
-              <div className="price-name">Мини комфорт · вторая линия</div>
+              <div className="price-name">Мини комфорт<br/><span style={{ fontSize: "0.7em", fontWeight: 400, opacity: 0.7 }}>вторая линия</span></div>
               <div className="price-desc">3–4 человека, включая детей</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
                 {[

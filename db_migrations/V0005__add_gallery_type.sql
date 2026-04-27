@@ -1,0 +1,2 @@
+ALTER TABLE t_p1777038_raider_pallada.sea_gallery ADD COLUMN IF NOT EXISTS gallery_type VARCHAR(20) DEFAULT 'sea';
+UPDATE t_p1777038_raider_pallada.sea_gallery SET gallery_type = 'sea' WHERE gallery_type IS NULL;
