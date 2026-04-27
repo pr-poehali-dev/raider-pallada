@@ -454,7 +454,7 @@ export default function Index() {
 
       {/* TELEGRAM BTN */}
       <a
-        href="https://t.me/reidpallada"
+        href="https://t.me/Reid_pallada_bot"
         target="_blank"
         rel="noopener noreferrer"
         className="tg-btn"
