@@ -32,7 +32,7 @@ export default function Index() {
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = [
       `📋 *Заявка с сайта — Рейд Паллада*`,
@@ -43,6 +43,13 @@ export default function Index() {
       form.guests ? `👥 Гости: ${form.guests}` : "",
     ].filter(Boolean).join("\n");
     window.open(`https://wa.me/79084418382?text=${encodeURIComponent(text)}`, "_blank");
+    try {
+      await fetch("https://functions.poehali.dev/2f1319ca-0801-4868-a8ca-97cd3c00f38d", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+    } catch (err) { console.error(err); }
     setFormSubmitted(true);
   };
 

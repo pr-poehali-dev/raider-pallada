@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "Send booking email",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Тест Тестов",
+        "phone": "+7 900 000-00-00",
+        "checkin": "2026-07-01",
+        "checkout": "2026-07-07",
+        "guests": "2 взрослых"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {"success": true},
+      "bodyMatcher": "partial"
+    }
+  ]
+}
