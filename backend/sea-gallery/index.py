@@ -1,0 +1,85 @@
+import json
+import os
+import uuid
+import base64
+import psycopg2
+
+SCHEMA = os.environ.get("MAIN_DB_SCHEMA", "t_p1777038_raider_pallada")
+UPLOAD_PASSWORD = os.environ.get("GALLERY_PASSWORD", "морской2026")
+
+CORS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, X-Gallery-Password",
+}
+
+
+def get_db():
+    return psycopg2.connect(os.environ["DATABASE_URL"])
+
+
+def handler(event: dict, context) -> dict:
+    """Галерея домика Морской: получение фото (GET), загрузка (POST), удаление (DELETE)"""
+    if event.get("httpMethod") == "OPTIONS":
+        return {"statusCode": 200, "headers": CORS, "body": ""}
+
+    method = event.get("httpMethod", "GET")
+
+    if method == "GET":
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(f"SELECT id, url, created_at FROM {SCHEMA}.sea_gallery ORDER BY created_at DESC")
+        rows = cur.fetchall()
+        conn.close()
+        photos = [{"id": r[0], "url": r[1], "created_at": str(r[2])} for r in rows]
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"photos": photos})}
+
+    if method == "POST":
+        body = json.loads(event.get("body") or "{}")
+        password = body.get("password", "")
+        if password != UPLOAD_PASSWORD:
+            return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
+
+        image_b64 = body.get("image")
+        content_type = body.get("content_type", "image/jpeg")
+        if not image_b64:
+            return {"statusCode": 400, "headers": CORS, "body": json.dumps({"error": "Нет файла"})}
+
+        ext = "jpg" if "jpeg" in content_type else content_type.split("/")[-1]
+        key = f"sea-gallery/{uuid.uuid4()}.{ext}"
+        data = base64.b64decode(image_b64)
+
+        import boto3
+        s3 = boto3.client(
+            "s3",
+            endpoint_url="https://bucket.poehali.dev",
+            aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        )
+        s3.put_object(Bucket="files", Key=key, Body=data, ContentType=content_type)
+        url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url) VALUES (%s) RETURNING id", (url,))
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        conn.close()
+
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": url})}
+
+    if method == "DELETE":
+        body = json.loads(event.get("body") or "{}")
+        password = body.get("password", "")
+        if password != UPLOAD_PASSWORD:
+            return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
+
+        photo_id = body.get("id")
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM {SCHEMA}.sea_gallery WHERE id = %s", (photo_id,))
+        conn.commit()
+        conn.close()
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"ok": True})}
+
+    return {"statusCode": 405, "headers": CORS, "body": json.dumps({"error": "Method not allowed"})}

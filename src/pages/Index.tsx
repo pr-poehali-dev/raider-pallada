@@ -11,6 +11,59 @@ export default function Index() {
   const [agreed, setAgreed] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [seaCardModalOpen, setSeaCardModalOpen] = useState(false);
+  const [galleryPhotos, setGalleryPhotos] = useState<{id: number; url: string}[]>([]);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIdx, setGalleryIdx] = useState(0);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [uploadPassword, setUploadPassword] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const GALLERY_URL = "https://functions.poehali.dev/2d41df0f-841c-4976-89e7-a1528b2cc77a";
+
+  useEffect(() => {
+    fetch(GALLERY_URL)
+      .then(r => r.json())
+      .then(d => setGalleryPhotos(d.photos || []))
+      .catch(() => {});
+  }, []);
+
+  const handleUpload = async () => {
+    if (!uploadFile || !uploadPassword) return;
+    setUploadLoading(true);
+    setUploadError("");
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const b64 = (e.target?.result as string).split(",")[1];
+      try {
+        const res = await fetch(GALLERY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: uploadPassword, image: b64, content_type: uploadFile.type }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setUploadError(data.error || "Ошибка"); }
+        else {
+          setGalleryPhotos(prev => [data, ...prev]);
+          setUploadOpen(false);
+          setUploadFile(null);
+          setUploadPassword("");
+        }
+      } catch { setUploadError("Ошибка загрузки"); }
+      setUploadLoading(false);
+    };
+    reader.readAsDataURL(uploadFile);
+  };
+
+  const handleDeletePhoto = async (id: number) => {
+    await fetch(GALLERY_URL, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: uploadPassword, id }),
+    });
+    setGalleryPhotos(prev => prev.filter(p => p.id !== id));
+  };
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -336,17 +389,11 @@ export default function Index() {
             </div>
             <div
               className="price-card best fade-up"
-              onClick={() => setSeaCardModalOpen(true)}
-              style={{
-                cursor: "pointer",
-                position: "relative",
-                overflow: "hidden",
-                backgroundImage: "url(https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+              style={{ position: "relative", overflow: "hidden", cursor: "default" }}
             >
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.72) 100%)" }} />
+              {/* Фон — первое фото из галереи или дефолтное */}
+              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${galleryPhotos[0]?.url || "https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.78) 100%)" }} />
               <div style={{ position: "relative", zIndex: 1 }}>
                 <div className="price-name">Морской</div>
                 <div className="price-desc">3–4 человека, включая детей</div>
@@ -368,6 +415,26 @@ export default function Index() {
                     <div key={f} className="price-feature">{f}</div>
                   ))}
                 </div>
+
+                {/* Галерея миниатюр */}
+                {galleryPhotos.length > 0 && (
+                  <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
+                    {galleryPhotos.slice(0, 4).map((p, i) => (
+                      <div key={p.id} onClick={() => { setGalleryIdx(i); setGalleryOpen(true); }} style={{ width: 52, height: 52, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.3)", flexShrink: 0, position: "relative" }}>
+                        <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        {i === 3 && galleryPhotos.length > 4 && (
+                          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>+{galleryPhotos.length - 4}</div>
+                        )}
+                      </div>
+                    ))}
+                    <div onClick={() => { setGalleryIdx(0); setGalleryOpen(true); }} style={{ width: 52, height: 52, borderRadius: 8, border: "2px dashed rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem" }}>⤢</div>
+                  </div>
+                )}
+
+                {/* Кнопка добавить фото */}
+                <button onClick={() => setUploadOpen(true)} style={{ marginTop: 14, width: "100%", padding: "8px 0", borderRadius: 10, border: "1.5px dashed rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)", fontSize: "0.82rem", cursor: "pointer" }}>
+                  + Добавить фото
+                </button>
               </div>
             </div>
             <div className="price-card fade-up">
@@ -539,6 +606,46 @@ export default function Index() {
       >
         📅 Забронировать
       </button>
+
+      {/* GALLERY LIGHTBOX */}
+      {galleryOpen && galleryPhotos.length > 0 && (
+        <div onClick={() => setGalleryOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", padding: 20 }}>
+          <button onClick={() => setGalleryOpen(false)} style={{ position: "absolute", top: 16, right: 16, color: "#fff", fontSize: 28, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "50%", width: 40, height: 40, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+          <div onClick={e => e.stopPropagation()} style={{ position: "relative", maxWidth: 600, width: "100%" }}>
+            <img src={galleryPhotos[galleryIdx]?.url} alt="" style={{ width: "100%", maxHeight: "70vh", objectFit: "contain", borderRadius: 12, display: "block" }} />
+            {galleryPhotos.length > 1 && (
+              <>
+                <button onClick={() => setGalleryIdx(i => (i - 1 + galleryPhotos.length) % galleryPhotos.length)} style={{ position: "absolute", left: -48, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 24, borderRadius: "50%", width: 40, height: 40, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
+                <button onClick={() => setGalleryIdx(i => (i + 1) % galleryPhotos.length)} style={{ position: "absolute", right: -48, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 24, borderRadius: "50%", width: 40, height: 40, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
+              </>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap", justifyContent: "center" }}>
+            {galleryPhotos.map((p, i) => (
+              <div key={p.id} onClick={e => { e.stopPropagation(); setGalleryIdx(i); }} style={{ width: 48, height: 48, borderRadius: 6, overflow: "hidden", cursor: "pointer", border: i === galleryIdx ? "2px solid #fff" : "2px solid transparent", opacity: i === galleryIdx ? 1 : 0.6 }}>
+                <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+            ))}
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", marginTop: 10 }}>{galleryIdx + 1} / {galleryPhotos.length}</div>
+        </div>
+      )}
+
+      {/* UPLOAD MODAL */}
+      {uploadOpen && (
+        <div onClick={() => setUploadOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#1a1a2e", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", position: "relative" }}>
+            <button onClick={() => setUploadOpen(false)} style={{ position: "absolute", top: 12, right: 12, background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", fontSize: 18 }}>×</button>
+            <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", marginBottom: 18 }}>Добавить фото</div>
+            <input type="file" accept="image/*" onChange={e => setUploadFile(e.target.files?.[0] || null)} style={{ width: "100%", marginBottom: 12, color: "#fff", fontSize: "0.85rem" }} />
+            <input type="password" placeholder="Пароль" value={uploadPassword} onChange={e => setUploadPassword(e.target.value)} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.07)", color: "#fff", fontSize: "0.9rem", marginBottom: 12, boxSizing: "border-box" }} />
+            {uploadError && <div style={{ color: "#f87171", fontSize: "0.82rem", marginBottom: 10 }}>{uploadError}</div>}
+            <button onClick={handleUpload} disabled={uploadLoading || !uploadFile || !uploadPassword} style={{ width: "100%", padding: "10px 0", borderRadius: 10, background: "var(--color-gold, #d4a017)", color: "#000", fontWeight: 700, fontSize: "0.95rem", border: "none", cursor: uploadLoading ? "wait" : "pointer", opacity: (!uploadFile || !uploadPassword) ? 0.5 : 1 }}>
+              {uploadLoading ? "Загрузка..." : "Загрузить"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* SEA CARD PHOTO MODAL */}
       {seaCardModalOpen && (
