@@ -128,7 +128,7 @@ export default function Index() {
         </div>
         <div className="hero-stats" style={{ position: "relative", zIndex: 3 }}>
           <div><div className="hero-stat-num">+24°С</div><div className="hero-stat-label">море в июле–августе</div></div>
-          <div><div className="hero-stat-num">3 ч</div><div className="hero-stat-label">от Владивостока</div></div>
+          <div><div className="hero-stat-num">4 ч</div><div className="hero-stat-label">от Владивостока</div></div>
           <div><div className="hero-stat-num">5★</div><div className="hero-stat-label">средняя оценка гостей</div></div>
           <div><div className="hero-stat-num">Июнь–Сент</div><div className="hero-stat-label">сезон 2026</div></div>
         </div>
