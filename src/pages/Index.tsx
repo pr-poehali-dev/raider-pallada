@@ -488,12 +488,45 @@ export default function Index() {
               </div>
             </div>
             <div className="price-card fade-up">
-              <div className="price-name">Всё своё</div>
-              <div className="price-desc">Полный комплект впечатлений</div>
-              <div className="price-amount">8 500 ₽</div>
-              <div className="price-per">за домик / сутки</div>
+              <div className="price-name">Мини комфорт · вторая линия</div>
+              <div className="price-desc">3–4 человека, включая детей</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
+                {[
+                  { period: "1 — 15 июля", price: "3 500 ₽" },
+                  { period: "15 июля — 25 авг.", price: "5 000 ₽" },
+                  { period: "25 авг. — сентябрь", price: "3 500 ₽" },
+                ].map(({ period, price }) => (
+                  <div key={period} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "5px 10px", background: "rgba(255,255,255,0.07)", borderRadius: 8 }}>
+                    <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.9)", lineHeight: 1.3 }}>{period}</span>
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-gold)", whiteSpace: "nowrap" }}>{price}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="price-per" style={{ marginBottom: 12 }}>за домик / сутки</div>
               <div className="price-features">
-                {["Всё из «Морского»", "Баня-бочка (2 часа)", "Приоритетный заезд", "Дети до 5 лет — бесплатно"].map((f) => (
+                {["Уютный домик с бельём", "Холодильник, вентилятор", "Большая закрытая веранда", "Мангальная зона"].map((f) => (
+                  <div key={f} className="price-feature">{f}</div>
+                ))}
+              </div>
+            </div>
+            <div className="price-card fade-up">
+              <div className="price-name">Семейный</div>
+              <div className="price-desc">3–4 человека, включая детей</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
+                {[
+                  { period: "1 — 15 июля", price: "3 500 ₽" },
+                  { period: "15 июля — 25 авг.", price: "5 000 ₽" },
+                  { period: "25 авг. — сентябрь", price: "3 500 ₽" },
+                ].map(({ period, price }) => (
+                  <div key={period} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "5px 10px", background: "rgba(255,255,255,0.07)", borderRadius: 8 }}>
+                    <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.9)", lineHeight: 1.3 }}>{period}</span>
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-gold)", whiteSpace: "nowrap" }}>{price}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="price-per" style={{ marginBottom: 12 }}>за домик / сутки</div>
+              <div className="price-features">
+                {["Уютный домик с бельём", "Холодильник, вентилятор", "Большая закрытая веранда", "Мангальная зона"].map((f) => (
                   <div key={f} className="price-feature">{f}</div>
                 ))}
               </div>
