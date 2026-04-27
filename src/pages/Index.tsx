@@ -34,6 +34,15 @@ export default function Index() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const text = [
+      `📋 *Заявка с сайта — Рейд Паллада*`,
+      `👤 Имя: ${form.name}`,
+      `📞 Телефон: ${form.phone}`,
+      `📅 Заезд: ${form.checkin}`,
+      `📅 Выезд: ${form.checkout}`,
+      form.guests ? `👥 Гости: ${form.guests}` : "",
+    ].filter(Boolean).join("\n");
+    window.open(`https://wa.me/79084418382?text=${encodeURIComponent(text)}`, "_blank");
     setFormSubmitted(true);
   };
 
