@@ -247,23 +247,7 @@
     #2d8a6e 60%,
     #1a4a38 100%
   );
-}
-.hero-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 60% 40%,
-      rgba(212, 169, 67, 0.18) 0%,
-      transparent 65%
-    ),
-    radial-gradient(
-      ellipse 60% 80% at 20% 70%,
-      rgba(13, 58, 68, 0.6) 0%,
-      transparent 60%
-    ),
-    linear-gradient(to bottom, transparent 40%, rgba(13, 30, 25, 0.75) 100%);
+  z-index: 0;
 }
 .hero-waves {
   position: absolute;

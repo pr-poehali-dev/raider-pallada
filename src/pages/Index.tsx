@@ -80,12 +80,28 @@ export default function Index() {
 
       {/* HERO */}
       <section className="hero">
-        <div className="hero-bg" aria-hidden="true" />
-        <svg className="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", zIndex: 0,
+          }}
+        >
+          <source src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/e2b02f6c-a2dc-4eb1-b7be-d03ccbaaf6aa.mp4" type="video/mp4" />
+        </video>
+        <div aria-hidden="true" style={{
+          position: "absolute", inset: 0, zIndex: 1,
+          background: "linear-gradient(160deg, rgba(13,58,68,0.72) 0%, rgba(26,96,112,0.55) 35%, rgba(45,138,110,0.45) 60%, rgba(26,74,56,0.65) 100%), linear-gradient(to bottom, transparent 40%, rgba(13,30,25,0.85) 100%)",
+        }} />
+        <svg className="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true" style={{ zIndex: 2 }}>
           <path d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z" fill="rgba(245,242,236,0.06)"/>
           <path d="M0,80 C360,40 720,110 1080,70 C1260,50 1380,90 1440,80 L1440,120 L0,120 Z" fill="rgba(245,242,236,0.04)"/>
         </svg>
-        <div className="hero-content">
+        <div className="hero-content" style={{ position: "relative", zIndex: 3 }}>
           <div className="hero-badge">
             <div className="hero-badge-dot" />
             Хасанский район · Коса Назимова · Сезон 2026
@@ -101,7 +117,7 @@ export default function Index() {
             </a>
           </div>
         </div>
-        <div className="hero-stats">
+        <div className="hero-stats" style={{ position: "relative", zIndex: 3 }}>
           <div><div className="hero-stat-num">+24°С</div><div className="hero-stat-label">море в июле–августе</div></div>
           <div><div className="hero-stat-num">3 ч</div><div className="hero-stat-label">от Владивостока</div></div>
           <div><div className="hero-stat-num">5★</div><div className="hero-stat-label">средняя оценка гостей</div></div>
