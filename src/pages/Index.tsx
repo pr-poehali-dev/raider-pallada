@@ -392,7 +392,7 @@ export default function Index() {
               style={{ position: "relative", overflow: "hidden", cursor: "default" }}
             >
               {/* Фон — первое фото из галереи или дефолтное */}
-              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${galleryPhotos[0]?.url || "https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${galleryPhotos[0]?.url || "https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/e29416ee-3932-4c25-af80-2f7234362e42.jpg"})`, backgroundSize: "cover", backgroundPosition: "center" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.78) 100%)" }} />
               <div style={{ position: "relative", zIndex: 1 }}>
                 <div className="price-name">Морской</div>
@@ -671,7 +671,7 @@ export default function Index() {
               }}
             >×</button>
             <img
-              src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG"
+              src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/e29416ee-3932-4c25-af80-2f7234362e42.jpg"
               alt="Вид из домика на море"
               style={{ width: "100%", borderRadius: 16, display: "block" }}
             />
