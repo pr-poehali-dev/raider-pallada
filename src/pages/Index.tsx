@@ -334,31 +334,40 @@ export default function Index() {
                 ))}
               </div>
             </div>
-            <div className="price-card best fade-up" onClick={() => setSeaCardModalOpen(true)} style={{ cursor: "pointer" }}>
-              <div style={{ position: "relative", margin: "-20px -20px 14px -20px", borderRadius: "16px 16px 0 0", overflow: "hidden", height: 180 }}>
-                <img src="https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG" alt="Вид из домика" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5) 100%)" }} />
-                <div style={{ position: "absolute", bottom: 8, right: 10, fontSize: "0.72rem", color: "rgba(255,255,255,0.8)", background: "rgba(0,0,0,0.35)", padding: "2px 8px", borderRadius: 20 }}>нажми, чтобы увидеть фото</div>
-              </div>
-              <div className="price-name">Морской</div>
-              <div className="price-desc">3–4 человека, включая детей</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
-                {[
-                  { period: "1 — 15 июля", price: "3 500 ₽" },
-                  { period: "15 июля — 25 авг.", price: "5 000 ₽" },
-                  { period: "25 авг. — сентябрь", price: "3 500 ₽" },
-                ].map(({ period, price }) => (
-                  <div key={period} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "5px 10px", background: "rgba(255,255,255,0.1)", borderRadius: 8 }}>
-                    <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.9)", lineHeight: 1.3 }}>{period}</span>
-                    <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-gold)", whiteSpace: "nowrap" }}>{price}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="price-per" style={{ marginBottom: 12 }}>за домик / сутки</div>
-              <div className="price-features">
-                {["Уютный домик с бельём", "Холодильник, вентилятор", "Вид на море", "Теневой навес", "Мангальная зона"].map((f) => (
-                  <div key={f} className="price-feature">{f}</div>
-                ))}
+            <div
+              className="price-card best fade-up"
+              onClick={() => setSeaCardModalOpen(true)}
+              style={{
+                cursor: "pointer",
+                position: "relative",
+                overflow: "hidden",
+                backgroundImage: "url(https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/1324114d-b5b7-45d1-be4c-2d9388d9ce9a.PNG)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.72) 100%)" }} />
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <div className="price-name">Морской</div>
+                <div className="price-desc">3–4 человека, включая детей</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
+                  {[
+                    { period: "1 — 15 июля", price: "3 500 ₽" },
+                    { period: "15 июля — 25 авг.", price: "5 000 ₽" },
+                    { period: "25 авг. — сентябрь", price: "3 500 ₽" },
+                  ].map(({ period, price }) => (
+                    <div key={period} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "5px 10px", background: "rgba(255,255,255,0.12)", borderRadius: 8 }}>
+                      <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.9)", lineHeight: 1.3 }}>{period}</span>
+                      <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-gold)", whiteSpace: "nowrap" }}>{price}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="price-per" style={{ marginBottom: 12 }}>за домик / сутки</div>
+                <div className="price-features">
+                  {["Уютный домик с бельём", "Холодильник, вентилятор", "Вид на море", "Теневой навес", "Мангальная зона"].map((f) => (
+                    <div key={f} className="price-feature">{f}</div>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="price-card fade-up">
