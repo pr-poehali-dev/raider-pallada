@@ -11,7 +11,7 @@ export default function Index() {
   const [agreed, setAgreed] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [seaCardModalOpen, setSeaCardModalOpen] = useState(false);
-  const [galleryPhotos, setGalleryPhotos] = useState<{id: number; url: string; media_type: string}[]>([]);
+  const [galleryPhotos, setGalleryPhotos] = useState<{id: number; url: string; media_type: string; thumbnail?: string}[]>([]);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -467,7 +467,15 @@ export default function Index() {
                   {galleryPhotos.slice(0, 4).map((p, i) => (
                     <div key={p.id} onClick={() => { setGalleryIdx(i); setGalleryOpen(true); }} style={{ width: 52, height: 52, borderRadius: 8, overflow: "hidden", cursor: "pointer", border: "2px solid rgba(255,255,255,0.3)", flexShrink: 0, position: "relative", background: "#000" }}>
                       {p.media_type === "video"
-                        ? <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", fontSize: "1.4rem" }}>▶</div>
+                        ? <>
+                            {p.thumbnail
+                              ? <img src={p.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", fontSize: "1.4rem" }}>▶</div>
+                            }
+                            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.3)" }}>
+                              <span style={{ fontSize: "1rem" }}>▶</span>
+                            </div>
+                          </>
                         : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       }
                       {i === 3 && galleryPhotos.length > 4 && (
@@ -674,8 +682,16 @@ export default function Index() {
           <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap", justifyContent: "center" }}>
             {galleryPhotos.map((p, i) => (
               <div key={p.id} onClick={e => { e.stopPropagation(); setGalleryIdx(i); }} style={{ width: 48, height: 48, borderRadius: 6, overflow: "hidden", cursor: "pointer", border: i === galleryIdx ? "2px solid #fff" : "2px solid transparent", opacity: i === galleryIdx ? 1 : 0.6, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {p.media_type === "video"
-                  ? <span style={{ color: "#fff", fontSize: "1.2rem" }}>▶</span>
+                            {p.media_type === "video"
+                  ? <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                      {p.thumbnail
+                        ? <img src={p.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        : <div style={{ width: "100%", height: "100%", background: "#111" }} />
+                      }
+                      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ color: "#fff", fontSize: "1rem" }}>▶</span>
+                      </div>
+                    </div>
                   : <img src={p.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 }
               </div>

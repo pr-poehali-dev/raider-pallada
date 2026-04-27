@@ -1,0 +1,1 @@
+ALTER TABLE t_p1777038_raider_pallada.sea_gallery ADD COLUMN IF NOT EXISTS thumbnail TEXT;

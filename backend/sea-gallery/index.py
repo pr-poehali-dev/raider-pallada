@@ -9,7 +9,7 @@ UPLOAD_PASSWORD = os.environ.get("GALLERY_PASSWORD", "морской2026")
 
 CORS = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Gallery-Password",
 }
 
@@ -28,10 +28,10 @@ def handler(event: dict, context) -> dict:
     if method == "GET":
         conn = get_db()
         cur = conn.cursor()
-        cur.execute(f"SELECT id, url, media_type, created_at FROM {SCHEMA}.sea_gallery ORDER BY created_at DESC")
+        cur.execute(f"SELECT id, url, media_type, thumbnail, created_at FROM {SCHEMA}.sea_gallery ORDER BY created_at DESC")
         rows = cur.fetchall()
         conn.close()
-        photos = [{"id": r[0], "url": r[1], "media_type": r[2] or "photo", "created_at": str(r[3])} for r in rows]
+        photos = [{"id": r[0], "url": r[1], "media_type": r[2] or "photo", "thumbnail": r[3], "created_at": str(r[4])} for r in rows]
         return {"statusCode": 200, "headers": CORS, "body": json.dumps({"photos": photos})}
 
     if method == "POST":
@@ -44,13 +44,14 @@ def handler(event: dict, context) -> dict:
         ready_url = body.get("url")
         if ready_url:
             media_type = "video" if ready_url.endswith((".mp4", ".mov", ".webm")) else "photo"
+            thumbnail = body.get("thumbnail")
             conn = get_db()
             cur = conn.cursor()
-            cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url, media_type) VALUES (%s, %s) RETURNING id", (ready_url, media_type))
+            cur.execute(f"INSERT INTO {SCHEMA}.sea_gallery (url, media_type, thumbnail) VALUES (%s, %s, %s) RETURNING id", (ready_url, media_type, thumbnail))
             new_id = cur.fetchone()[0]
             conn.commit()
             conn.close()
-            return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": ready_url, "media_type": media_type})}
+            return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": ready_url, "media_type": media_type, "thumbnail": thumbnail})}
 
         file_b64 = body.get("image")
         content_type = body.get("content_type", "image/jpeg")
@@ -127,6 +128,20 @@ def handler(event: dict, context) -> dict:
         conn.close()
 
         return {"statusCode": 200, "headers": CORS, "body": json.dumps({"id": new_id, "url": cdn_url, "media_type": media_type, "upload_url": presigned_url})}
+
+    if method == "PATCH":
+        body = json.loads(event.get("body") or "{}")
+        password = body.get("password", "")
+        if password != UPLOAD_PASSWORD:
+            return {"statusCode": 403, "headers": CORS, "body": json.dumps({"error": "Неверный пароль"})}
+        photo_id = body.get("id")
+        thumbnail = body.get("thumbnail")
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(f"UPDATE {SCHEMA}.sea_gallery SET thumbnail = %s WHERE id = %s", (thumbnail, photo_id))
+        conn.commit()
+        conn.close()
+        return {"statusCode": 200, "headers": CORS, "body": json.dumps({"ok": True})}
 
     if method == "DELETE":
         body = json.loads(event.get("body") or "{}")

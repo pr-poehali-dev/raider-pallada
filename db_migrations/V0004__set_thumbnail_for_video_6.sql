@@ -1,0 +1,1 @@
+UPDATE t_p1777038_raider_pallada.sea_gallery SET thumbnail = 'https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/39094c34-17fa-4cdf-bd90-1015dd75c8fc.png' WHERE id = 6;
