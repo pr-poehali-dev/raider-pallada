@@ -507,7 +507,10 @@ export default function Index() {
                 </div>
               </div>
             </div>
-            <div className="price-card fade-up">
+            <div className="price-card fade-up" style={{ position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, backgroundImage: `url(https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/9a4e94da-eccc-4392-9e1d-2b3729159efb.PNG)`, backgroundSize: "cover", backgroundPosition: "center" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.82) 100%)" }} />
+              <div style={{ position: "relative", zIndex: 1 }}>
               <div className="price-name">Мини комфорт<br/><span style={{ fontSize: "0.7em", fontWeight: 400, opacity: 0.7 }}>вторая линия</span></div>
               <div className="price-desc">3–4 человека, включая детей</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, margin: "12px 0" }}>
@@ -536,6 +539,7 @@ export default function Index() {
                   </div>
                 ))}
                 <div onClick={() => openUpload("comfort")} style={{ width: 48, height: 48, borderRadius: 8, border: "1.5px dashed rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "rgba(255,255,255,0.7)", fontSize: "1.4rem", flexShrink: 0 }}>+</div>
+              </div>
               </div>
             </div>
             <div className="price-card fade-up">
