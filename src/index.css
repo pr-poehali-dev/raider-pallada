@@ -538,6 +538,34 @@
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
+  animation: icon-float 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.place-feature:nth-child(1) .place-feature-icon {
+  animation-delay: 0s;
+}
+.place-feature:nth-child(2) .place-feature-icon {
+  animation-delay: 0.4s;
+}
+.place-feature:nth-child(3) .place-feature-icon {
+  animation-delay: 0.8s;
+}
+.place-feature:nth-child(4) .place-feature-icon {
+  animation-delay: 1.2s;
+}
+
+@keyframes icon-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-6px) rotate(-4deg);
+  }
+  60% {
+    transform: translateY(-3px) rotate(3deg);
+  }
 }
 .place-feature-title {
   font-weight: 600;
