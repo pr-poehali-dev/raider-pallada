@@ -260,9 +260,9 @@ export default function Index() {
         <div className="section-inner">
           <div>
             <p className="section-label" style={{ color: "var(--color-gold)" }}>Узнаёте себя?</p>
-            <h2 className="pain-title">Устали от отдыха,<br />который <em>не отдыхает?</em></h2>
+            <h2 className="pain-title">Иногда хочется просто выдохнуть —<br />и чтобы <em>никто не мешал.</em></h2>
             <p className="pain-text" style={{ marginTop: "var(--space-4)" }}>
-              Толпы на пляже, дорогие отели без души, шум и суета. Мы создали место, где всё по-другому.
+              Не пафосный курорт, не шумный пляж, не отель с улыбкой по регламенту. Просто хорошее место у моря, где отдыхается по-настоящему.
             </p>
           </div>
           <div className="pain-items">
