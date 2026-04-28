@@ -258,10 +258,10 @@ export default function Index() {
           </div>
           <div className="pain-items">
             {[
-              { icon: "🏖️", title: "Переполненные пляжи?", desc: "У нас — собственный берег только для гостей базы" },
-              { icon: "🏨", title: "Холодные номера в отеле?", desc: "Тёплые деревянные домики с верандой и видом на море" },
-              { icon: "🍽️", title: "Ресторанные цены за завтрак?", desc: "Мангальные зоны — готовьте сами, когда хотите" },
-              { icon: "📵", title: "Хочется просто тишины?", desc: "Коса Назимова — звук волн, сосны и звёздное небо" },
+              { icon: "🌊", title: "Переполненные пляжи?", desc: "У нас — собственный берег только для гостей базы" },
+              { icon: "🪵", title: "Холодные номера в отеле?", desc: "Тёплые деревянные домики с верандой и видом на море" },
+              { icon: "🔥", title: "Ресторанные цены за завтрак?", desc: "Мангальные зоны — готовьте сами, когда хотите" },
+              { icon: "🌿", title: "Хочется просто тишины?", desc: "Коса Назимова — звук волн, сосны и звёздное небо" },
             ].map((item) => (
               <div key={item.title} className="pain-item fade-up">
                 <div className="pain-icon">{item.icon}</div>
@@ -316,10 +316,10 @@ export default function Index() {
             </div>
             <div className="place-features fade-up">
               {[
-                { icon: "🌊", title: "Японское море", desc: "Самое тёплое море Дальнего Востока. Прогревается до +24–26°С в июле–августе. Чистая вода, живописные берега." },
-                { icon: "🏝️", title: "Коса Назимова", desc: "Узкая полоска суши между морем и заливом. С одной стороны рассветы, с другой — закаты. Таких мест в России единицы." },
-                { icon: "🌲", title: "Сосновый воздух", desc: "Хасанский район — это смешанные леса, сопки и дикая природа. База стоит прямо у кромки леса." },
-                { icon: "🕊️", title: "Тишина и уединение", desc: "Небольшая база — только свои гости. Никакой толпы, никаких аниматоров с микрофоном. Только море и вы." },
+                { icon: "🐋", title: "Японское море", desc: "Самое тёплое море Дальнего Востока. Прогревается до +24–26°С в июле–августе. Чистая вода, живописные берега." },
+                { icon: "🏄", title: "Коса Назимова", desc: "Узкая полоска суши между морем и заливом. С одной стороны рассветы, с другой — закаты. Таких мест в России единицы." },
+                { icon: "💨", title: "Морской воздух", desc: "Коса Назимова — здесь каждый вдох, как глоток свободы." },
+                { icon: "🌅", title: "Тишина и уединение", desc: "Небольшая база — только свои гости. Никакой толпы, никаких аниматоров с микрофоном. Только море и вы." },
               ].map((f) => (
                 <div key={f.title} className="place-feature">
                   <div className="place-feature-icon">{f.icon}</div>
@@ -341,16 +341,16 @@ export default function Index() {
           <h2 className="section-title fade-up">Всё для настоящего отдыха</h2>
           <div className="services-grid">
             <div className="service-card featured fade-up">
-              <div className="service-emoji">🏠</div>
+              <div className="service-emoji">🪴</div>
               <div className="service-title">Уютные домики с верандой</div>
               <div className="service-desc">Деревянные домики с полным комплектом постельного белья, верандой с видом на море. Просыпаетесь — а море прямо перед вами.</div>
             </div>
             {[
-              { emoji: "🧖", title: "Баня-бочка у воды", desc: "Классический контраст: раскалённая баня и прохладное Японское море рядом." },
-              { emoji: "🛶", title: "SUP и каяки", desc: "Прокат досок и каяков — выходите прямо с берега базы." },
-              { emoji: "🔥", title: "Мангальные зоны", desc: "Оборудованные беседки с мангалом — жарьте, когда захочется." },
-              { emoji: "🐟", title: "Рыбалка", desc: "Японское море кормит само — кальмар, камбала, краб." },
-              { emoji: "🅿️", title: "Охраняемая парковка", desc: "Парковка прямо на территории. Привезли велосипеды — рады." },
+              { emoji: "🛁", title: "Баня-бочка у воды", desc: "Классический контраст: раскалённая баня и прохладное Японское море рядом." },
+              { emoji: "🚣", title: "SUP и каяки", desc: "Прокат досок и каяков — выходите прямо с берега базы." },
+              { emoji: "🍖", title: "Мангальные зоны", desc: "Оборудованные беседки с мангалом — жарьте, когда захочется." },
+              { emoji: "🎣", title: "Рыбалка", desc: "Японское море кормит само — кальмар, камбала, краб." },
+              { emoji: "🚗", title: "Охраняемая парковка", desc: "Парковка прямо на территории. Привезли велосипеды — рады." },
             ].map((s) => (
               <div key={s.title} className="service-card fade-up">
                 <div className="service-emoji">{s.emoji}</div>
@@ -702,9 +702,9 @@ export default function Index() {
         <div className="footer-logo">Рейд <span>Паллада</span></div>
         <div className="footer-copy">© 2026 База отдыха «Рейд Паллада»<br />Коса Назимова, Хасанский район</div>
         <div className="footer-contacts">
-          <div className="footer-contact">📞 +7 (XXX) XXX-XX-XX</div>
-          <div className="footer-contact">💬 Telegram / WhatsApp</div>
-          <div className="footer-contact">📧 info@reid-pallada.ru</div>
+          <div className="footer-contact">☎️ +7 (XXX) XXX-XX-XX</div>
+          <div className="footer-contact">✈️ Telegram / WhatsApp</div>
+          <div className="footer-contact">✉️ info@reid-pallada.ru</div>
         </div>
       </footer>
 
