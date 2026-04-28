@@ -142,6 +142,15 @@ export default function Index() {
     return () => observerRef.current?.disconnect();
   }, []);
 
+  useEffect(() => {
+    const itemObserver = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); itemObserver.unobserve(e.target); } }),
+      { threshold: 0.2, rootMargin: "0px 0px -30px 0px" }
+    );
+    document.querySelectorAll(".timeline-item").forEach((el) => itemObserver.observe(el));
+    return () => itemObserver.disconnect();
+  }, []);
+
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -381,7 +390,7 @@ export default function Index() {
               { time: "19:00", icon: "🛁", title: "Баня + море", desc: "Выходите из бани — и сразу в море. Один из лучших контрастов в жизни." },
               { time: "22:00", icon: "🔥", title: "Костёр на берегу", desc: "Дрова, маршмеллоу, гитара по желанию. Огонь, море и звёздное небо — лучший финал дня без экрана." },
             ].map((item, i) => (
-              <div key={item.time} className="timeline-item" style={{ animationDelay: `${i * 0.12}s` }}>
+              <div key={item.time} className="timeline-item" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="timeline-time">{item.time}</div>
                 <div className="timeline-dot">
                   <span className="timeline-dot-icon">{item.icon}</span>
