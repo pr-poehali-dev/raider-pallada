@@ -631,9 +631,9 @@
 .day {
   background: linear-gradient(
     160deg,
-    color-mix(in oklab, var(--color-primary) 6%, var(--color-surface)) 0%,
-    color-mix(in oklab, var(--color-gold) 8%, var(--color-surface)) 60%,
-    color-mix(in oklab, var(--color-primary) 4%, var(--color-surface)) 100%
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface)) 0%,
+    color-mix(in oklab, var(--color-gold) 18%, var(--color-surface)) 60%,
+    color-mix(in oklab, var(--color-primary) 10%, var(--color-surface)) 100%
   );
 }
 .timeline {
