@@ -390,7 +390,7 @@ export default function Index() {
               { time: "19:00", icon: "🛁", title: "Баня + море", desc: "Выходите из бани — и сразу в море. Один из лучших контрастов в жизни." },
               { time: "22:00", icon: "🔥", title: "Костёр на берегу", desc: "Дрова, маршмеллоу, гитара по желанию. Огонь, море и звёздное небо — лучший финал дня без экрана." },
             ].map((item, i) => (
-              <div key={item.time} className="timeline-item" style={{ transitionDelay: `${i * 0.1}s` }}>
+              <div key={item.time} className="timeline-item" style={{ transitionDelay: `${i * 0.18}s` }}>
                 <div className="timeline-time">{item.time}</div>
                 <div className="timeline-dot">
                   <span className="timeline-dot-icon">{item.icon}</span>

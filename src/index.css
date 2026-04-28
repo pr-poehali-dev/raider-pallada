@@ -673,8 +673,8 @@
   opacity: 0;
   transform: translateX(-24px);
   transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
+    opacity 0.7s ease,
+    transform 0.7s ease;
 }
 .timeline-item.visible {
   opacity: 1;
