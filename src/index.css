@@ -456,8 +456,70 @@
   padding: var(--space-4) var(--space-5);
 }
 .pain-icon {
-  font-size: 1.5rem;
+  font-size: 2rem;
   flex-shrink: 0;
+  display: inline-block;
+  animation: pain-icon-bounce 2.5s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.pain-item:nth-child(1) .pain-icon {
+  animation-name: pain-icon-wave;
+  animation-duration: 3s;
+}
+.pain-item:nth-child(2) .pain-icon {
+  animation-name: pain-icon-flicker;
+  animation-duration: 1.8s;
+}
+.pain-item:nth-child(3) .pain-icon {
+  animation-name: pain-icon-sway;
+  animation-duration: 4s;
+}
+
+@keyframes pain-icon-wave {
+  0%,
+  100% {
+    transform: rotate(-10deg) translateY(0);
+  }
+  25% {
+    transform: rotate(10deg) translateY(-4px);
+  }
+  50% {
+    transform: rotate(-6deg) translateY(2px);
+  }
+  75% {
+    transform: rotate(8deg) translateY(-2px);
+  }
+}
+
+@keyframes pain-icon-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+    filter: brightness(1);
+  }
+  30% {
+    transform: scale(1.15) rotate(3deg);
+    filter: brightness(1.3);
+  }
+  60% {
+    transform: scale(0.95) rotate(-2deg);
+    filter: brightness(0.9);
+  }
+  80% {
+    transform: scale(1.1) rotate(2deg);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes pain-icon-sway {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-5px);
+  }
 }
 .pain-item-title {
   font-weight: 600;
