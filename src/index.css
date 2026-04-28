@@ -667,7 +667,6 @@
   background: var(--color-primary);
   color: #fff;
   border-color: transparent;
-  aspect-ratio: 1 / 1;
 }
 .service-card.featured .service-title {
   color: #fff;
