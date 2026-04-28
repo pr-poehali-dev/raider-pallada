@@ -348,10 +348,19 @@ export default function Index() {
           <p className="section-label fade-up">Что включено</p>
           <h2 className="section-title fade-up">Всё для настоящего отдыха</h2>
           <div className="services-grid">
-            <div className="service-card featured fade-up">
-              <div className="service-emoji">🪴</div>
-              <div className="service-title">Уютные домики с верандой</div>
-              <div className="service-desc">Деревянные домики с полным комплектом постельного белья, верандой с видом на море. Просыпаетесь — а море прямо перед вами.</div>
+            <div className="service-card featured fade-up" style={{
+              backgroundImage: 'url(https://cdn.poehali.dev/projects/d0b8e08e-3e07-463e-9b80-7ee7ed755aa5/bucket/b411aa78-d261-434a-9666-b24d58a664df.JPG)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.72) 40%, rgba(0,0,0,0.15) 100%)', zIndex: 0 }} />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div className="service-emoji">🪴</div>
+                <div className="service-title" style={{ color: '#fff' }}>Уютные домики с верандой</div>
+                <div className="service-desc" style={{ color: 'rgba(255,255,255,0.85)' }}>Деревянные домики с полным комплектом постельного белья, верандой с видом на море. Просыпаетесь — а море прямо перед вами.</div>
+              </div>
             </div>
             {[
               { emoji: "🛁", title: "Баня-бочка у воды", desc: "Классический контраст: раскалённая баня и прохладное Японское море рядом." },
