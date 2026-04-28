@@ -637,14 +637,15 @@
   flex-direction: column;
   gap: 0;
   position: relative;
+  max-width: 680px;
 }
 .timeline::before {
   content: "";
   position: absolute;
-  left: 54px;
+  left: 62px;
   top: 0;
   bottom: 0;
-  width: 1px;
+  width: 2px;
   background: linear-gradient(
     to bottom,
     var(--color-primary),
@@ -652,37 +653,64 @@
     transparent
   );
 }
+
+@keyframes timeline-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .timeline-item {
   display: flex;
-  gap: var(--space-6);
+  gap: var(--space-5);
   align-items: flex-start;
-  padding: var(--space-5) 0;
+  padding: var(--space-4) 0;
+  opacity: 0;
+  animation: timeline-slide-in 0.5s ease forwards;
 }
 .timeline-time {
   width: 54px;
   font-family: var(--font-display);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 700;
   color: var(--color-primary);
   flex-shrink: 0;
   text-align: right;
+  padding-top: 10px;
 }
 .timeline-dot {
-  width: 10px;
-  height: 10px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: color-mix(in oklab, var(--color-primary) 12%, var(--color-bg));
+  border: 2px solid color-mix(in oklab, var(--color-primary) 30%, transparent);
   flex-shrink: 0;
-  margin-top: 6px;
   position: relative;
   z-index: 1;
-  box-shadow:
-    0 0 0 3px var(--color-bg),
-    0 0 0 5px var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+.timeline-item:hover .timeline-dot {
+  transform: scale(1.18);
+  background: color-mix(in oklab, var(--color-primary) 22%, var(--color-bg));
+}
+.timeline-dot-icon {
+  font-size: 1rem;
+  line-height: 1;
 }
 .timeline-text {
   font-size: var(--text-base);
   line-height: 1.6;
+  padding-top: 6px;
 }
 .timeline-text strong {
   font-weight: 600;
