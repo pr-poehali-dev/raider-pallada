@@ -419,36 +419,58 @@ export default function Index() {
         <div className="section-inner" style={{ textAlign: "center" }}>
           <p className="section-label fade-up">Отзывы гостей</p>
           <h2 className="section-title fade-up">Что говорят те,<br />кто уже побывал</h2>
-          <div className="fade-up" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: "var(--space-8)" }}>
-            <span style={{ fontSize: "3rem", fontWeight: 800, color: "#fff", fontFamily: "var(--font-display)", lineHeight: 1 }}>4,9</span>
-            <div style={{ textAlign: "left" }}>
-              <div style={{ color: "var(--color-gold)", fontSize: "1.3rem", letterSpacing: 2 }}>★★★★★</div>
-              <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "var(--text-sm)", marginTop: 2 }}>96 отзывов на Яндекс Картах</div>
+
+          <div className="fade-up" style={{
+            display: "inline-flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "var(--space-6)",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid var(--color-border)",
+            borderRadius: "var(--radius-xl)",
+            padding: "var(--space-8) var(--space-12)",
+            backdropFilter: "blur(8px)",
+            marginBottom: "var(--space-8)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-5)" }}>
+              <span style={{
+                fontSize: "4rem",
+                fontWeight: 800,
+                color: "var(--color-text)",
+                fontFamily: "var(--font-display)",
+                lineHeight: 1,
+              }}>4,9</span>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ color: "var(--color-gold)", fontSize: "1.4rem", letterSpacing: 4, marginBottom: 4 }}>★★★★★</div>
+                <div style={{ color: "var(--color-text-muted)", fontSize: "var(--text-sm)" }}>96 отзывов на Яндекс Картах</div>
+              </div>
             </div>
+
+            <a
+              href="https://yandex.ru/maps/org/reyd_pallada/211347224719/reviews/?ll=131.083662%2C42.874877&z=8"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "var(--color-accent)",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "var(--text-base)",
+                fontFamily: "var(--font-body)",
+                padding: "var(--space-3) var(--space-8)",
+                borderRadius: "var(--radius-full)",
+                textDecoration: "none",
+                boxShadow: "0 4px 20px rgba(201, 122, 46, 0.35)",
+                transition: "var(--transition)",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "var(--color-accent-hover)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "var(--color-accent)"; e.currentTarget.style.transform = "translateY(0)"; }}
+            >
+              Читать все отзывы →
+            </a>
           </div>
-          <a
-            href="https://yandex.ru/maps/org/reyd_pallada/211347224719/reviews/?ll=131.083662%2C42.874877&z=8"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="fade-up"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
-              background: "var(--color-gold)",
-              color: "#1a1a1a",
-              fontWeight: 700,
-              fontSize: "var(--text-base)",
-              padding: "14px 32px",
-              borderRadius: 8,
-              textDecoration: "none",
-              transition: "opacity 0.2s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
-            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-          >
-            ★ Читать отзывы на Яндекс Картах
-          </a>
         </div>
       </section>
 
