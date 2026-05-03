@@ -416,28 +416,35 @@ export default function Index() {
 
       {/* REVIEWS */}
       <section className="section reviews">
-        <div className="section-inner">
+        <div className="section-inner" style={{ textAlign: "center" }}>
           <p className="section-label fade-up">Отзывы гостей</p>
-          <h2 className="section-title fade-up">Те, кто уже был —<br />возвращаются снова</h2>
-          <div className="reviews-grid">
-            {[
-              { initials: "АП", color: "var(--color-primary)", name: "Александр Петров", city: "Владивосток · июль 2025", text: "«Приехали на 3 дня — остались на неделю. Место затягивает. Тишина, море, баня — всё на месте. Уже планируем следующий сезон.»" },
-              { initials: "МС", color: "var(--color-accent)", name: "Марина Сергеева", city: "Хабаровск · август 2025", text: "«Лучший семейный отдых за 5 лет. Детям было раздолье на пляже, муж рыбачил, я — на SUP. Хозяева очень приветливые.»" },
-              { initials: "ДК", color: "#2d8a6e", name: "Дмитрий Козлов", city: "Уссурийск · август 2025", text: "«Коса Назимова — открытие года. Такого чистого моря в Приморье я не видел. Закаты фантастические. Обязательно вернёмся.»" },
-            ].map((r) => (
-              <div key={r.name} className="review-card fade-up">
-                <div className="review-stars">★★★★★</div>
-                <p className="review-text">{r.text}</p>
-                <div className="review-author">
-                  <div className="review-avatar" style={{ background: r.color }}>{r.initials}</div>
-                  <div>
-                    <div className="review-name">{r.name}</div>
-                    <div className="review-city">{r.city}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h2 className="section-title fade-up">Что говорят те,<br />кто уже побывал</h2>
+          <p className="fade-up" style={{ color: "rgba(255,255,255,0.65)", fontSize: "var(--text-base)", marginBottom: "var(--space-8)" }}>
+            Все отзывы — настоящие, на Яндекс Картах
+          </p>
+          <a
+            href="https://yandex.ru/maps/org/reyd_pallada/211347224719/reviews/?ll=131.083662%2C42.874877&z=8"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fade-up"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: "var(--color-gold)",
+              color: "#1a1a1a",
+              fontWeight: 700,
+              fontSize: "var(--text-base)",
+              padding: "14px 32px",
+              borderRadius: 8,
+              textDecoration: "none",
+              transition: "opacity 0.2s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            ★ Читать отзывы на Яндекс Картах
+          </a>
         </div>
       </section>
 
