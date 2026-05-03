@@ -419,9 +419,13 @@ export default function Index() {
         <div className="section-inner" style={{ textAlign: "center" }}>
           <p className="section-label fade-up">Отзывы гостей</p>
           <h2 className="section-title fade-up">Что говорят те,<br />кто уже побывал</h2>
-          <p className="fade-up" style={{ color: "rgba(255,255,255,0.65)", fontSize: "var(--text-base)", marginBottom: "var(--space-8)" }}>
-            Все отзывы — настоящие, на Яндекс Картах
-          </p>
+          <div className="fade-up" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: "var(--space-8)" }}>
+            <span style={{ fontSize: "3rem", fontWeight: 800, color: "#fff", fontFamily: "var(--font-display)", lineHeight: 1 }}>4,9</span>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ color: "var(--color-gold)", fontSize: "1.3rem", letterSpacing: 2 }}>★★★★★</div>
+              <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "var(--text-sm)", marginTop: 2 }}>96 отзывов на Яндекс Картах</div>
+            </div>
+          </div>
           <a
             href="https://yandex.ru/maps/org/reyd_pallada/211347224719/reviews/?ll=131.083662%2C42.874877&z=8"
             target="_blank"
