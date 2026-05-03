@@ -607,75 +607,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* BOOKING */}
-      <section className="cta-section" id="booking">
-        <div className="cta-inner">
-          <p className="cta-label">Бронирование сезон 2026</p>
-          <h2 className="cta-title">Лето бронируют уже сейчас</h2>
-          <p className="cta-desc">Свободных мест на август осталось мало. Оставьте заявку — перезвоним в течение 15 минут и подтвердим даты.</p>
-          <div className="cta-urgency">🔥 Июль и август — почти заняты</div>
-          <div className="form-wrap fade-up">
-            {!formSubmitted ? (
-              <form onSubmit={handleSubmit}>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Ваше имя</label>
-                    <input className="form-input" type="text" placeholder="Иван Иванов" required
-                      value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Телефон / Telegram</label>
-                    <input className="form-input" type="tel" placeholder="+7 924 000-00-00" required
-                      value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Дата заезда</label>
-                    <input className="form-input" type="date" min="2026-06-01" max="2026-09-30" required
-                      style={{ colorScheme: "dark" }}
-                      value={form.checkin} onChange={(e) => setForm({ ...form, checkin: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Дата выезда</label>
-                    <input className="form-input" type="date" min="2026-06-03" max="2026-10-01" required
-                      style={{ colorScheme: "dark" }}
-                      value={form.checkout} onChange={(e) => setForm({ ...form, checkout: e.target.value })} />
-                  </div>
-                  <div className="form-group full">
-                    <label className="form-label">Количество гостей и пожелания</label>
-                    <input className="form-input" type="text" placeholder="2 взрослых + 1 ребёнок, хотим баню"
-                      value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} />
-                  </div>
-                </div>
-                <button type="submit" className="btn-submit" disabled={!agreed}
-                  style={{ opacity: agreed ? 1 : 0.4, cursor: agreed ? "pointer" : "not-allowed" }}>
-                  Отправить заявку →
-                </button>
-                <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12, cursor: "pointer" }}>
-                  <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
-                    style={{ width: 18, height: 18, accentColor: "var(--color-gold)", cursor: "pointer" }} />
-                  <span className="form-note" style={{ margin: 0 }}>
-                    Я согласен на <a href="/privacy" target="_blank" style={{ color: "var(--color-gold)", textDecoration: "underline" }}>обработку персональных данных</a>
-                  </span>
-                </label>
-              </form>
-            ) : (
-              <div style={{ textAlign: "center", padding: "var(--space-8)" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "var(--space-4)" }}>🎉</div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "#fff", marginBottom: "var(--space-3)" }}>
-                  Заявка принята!
-                </h3>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "var(--text-sm)" }}>
-                  Спасибо! Мы свяжемся с вами в ближайшее время.
-                </p>
-                <button onClick={() => setFormSubmitted(false)}
-                  style={{ marginTop: "var(--space-5)", color: "var(--color-gold)", fontSize: "var(--text-sm)", textDecoration: "underline" }}>
-                  Отправить ещё одну заявку
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+
 
       {/* LOCATION */}
       <section className="section location" id="location">
